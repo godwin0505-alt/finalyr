@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 9 - Verilog Comparator Module</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px; color: #e2e8f0; }
+  .container { width: 1250px; }
+  .title { text-align: center; font-size: 26px; font-weight: 700; margin-bottom: 32px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+  /* Code Panel */
+  .code-panel { background: #1e293b; border-radius: 16px; padding: 24px; border: 2px solid #a855f7; }
+  .code-panel h3 { font-size: 16px; font-weight: 700; color: #c084fc; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .code-panel pre { font-family: 'Consolas', 'Fira Code', monospace; font-size: 14px; line-height: 1.8; }
+  .kw { color: #c084fc; font-weight: 700; }
+  .ty { color: #22d3ee; }
+  .num { color: #fbbf24; }
+  .cm { color: #64748b; font-style: italic; }
+  .str { color: #34d399; }
+  .id { color: #e2e8f0; }
+  .ln { color: #475569; user-select: none; display: inline-block; width: 28px; text-align: right; margin-right: 16px; }
+
+  /* Gate Diagram */
+  .gate-panel { background: #1e293b; border-radius: 16px; padding: 24px; border: 2px solid #3b82f6; }
+  .gate-panel h3 { font-size: 16px; font-weight: 700; color: #93c5fd; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+  .gate-svg { width: 100%; height: auto; }
+
+  /* Truth Table */
+  .truth-table { margin-top: 24px; }
+  .truth-table h3 { font-size: 16px; font-weight: 700; color: #fbbf24; margin-bottom: 12px; }
+  .tt { width: 100%; border-collapse: collapse; }
+  .tt th { background: #334155; padding: 10px 16px; text-align: center; font-size: 13px; font-weight: 700; color: #e2e8f0; border: 1px solid #475569; }
+  .tt td { padding: 10px 16px; text-align: center; font-size: 14px; font-family: 'Consolas', monospace; border: 1px solid #334155; }
+  .tt tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .tt .res { font-weight: 700; }
+  .gt { color: #f87171; }
+  .lt { color: #60a5fa; }
+  .eq { color: #34d399; }
+
+  .props-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+  .prop { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 16px; font-size: 12px; text-align: center; }
+  .prop strong { color: #fbbf24; display: block; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Verilog Comparator Module &mdash; RTL Design</div>
+  <div class="two-col">
+    <!-- Left: Verilog Code -->
+    <div class="code-panel">
+      <h3>&#128220; comparator.v (17 lines)</h3>
+      <pre><span class="ln"> 1</span><span class="cm">// 16-bit comparator for Q8.8 fixed-point temperatures</span>
+<span class="ln"> 2</span><span class="kw">module</span> <span class="str">comparator</span>(
+<span class="ln"> 3</span>    <span class="kw">input</span>  <span class="ty">[15:0]</span> <span class="id">a</span>,       <span class="cm">// Q8.8 Temperature A</span>
+<span class="ln"> 4</span>    <span class="kw">input</span>  <span class="ty">[15:0]</span> <span class="id">b</span>,       <span class="cm">// Q8.8 Temperature B</span>
+<span class="ln"> 5</span>    <span class="kw">output reg</span> <span class="ty">[1:0]</span> <span class="id">result</span>  <span class="cm">// [gt, lt]</span>
+<span class="ln"> 6</span>);
+<span class="ln"> 7</span>    <span class="kw">always</span> @(*) <span class="kw">begin</span>
+<span class="ln"> 8</span>        <span class="kw">if</span> (<span class="id">a</span> > <span class="id">b</span>) <span class="kw">begin</span>
+<span class="ln"> 9</span>            <span class="id">result</span> = <span class="num">2'b10</span>;  <span class="cm">// gt=1, lt=0</span>
+<span class="ln">10</span>        <span class="kw">end else if</span> (<span class="id">a</span> < <span class="id">b</span>) <span class="kw">begin</span>
+<span class="ln">11</span>            <span class="id">result</span> = <span class="num">2'b01</span>;  <span class="cm">// gt=0, lt=1</span>
+<span class="ln">12</span>        <span class="kw">end else begin</span>
+<span class="ln">13</span>            <span class="id">result</span> = <span class="num">2'b00</span>;  <span class="cm">// equal</span>
+<span class="ln">14</span>        <span class="kw">end</span>
+<span class="ln">15</span>    <span class="kw">end</span>
+<span class="ln">16</span><span class="kw">endmodule</span></pre>
+    </div>
+
+    <!-- Right: Gate-level Diagram -->
+    <div class="gate-panel">
+      <h3>&#128268; Gate-Level Magnitude Comparator</h3>
+      <svg class="gate-svg" viewBox="0 0 520 360" xmlns="http://www.w3.org/2000/svg">
+        <!-- Input buses -->
+        <rect x="10" y="40" width="100" height="36" rx="8" fill="rgba(168,85,247,0.2)" stroke="#a855f7" stroke-width="2"/>
+        <text x="60" y="63" fill="#c084fc" text-anchor="middle" font-size="14" font-weight="700" font-family="Consolas">a[15:0]</text>
+        <rect x="10" y="100" width="100" height="36" rx="8" fill="rgba(59,130,246,0.2)" stroke="#3b82f6" stroke-width="2"/>
+        <text x="60" y="123" fill="#93c5fd" text-anchor="middle" font-size="14" font-weight="700" font-family="Consolas">b[15:0]</text>
+
+        <!-- Arrows to comparator -->
+        <line x1="110" y1="58" x2="170" y2="120" stroke="#a855f7" stroke-width="2" marker-end="url(#arrowP)"/>
+        <line x1="110" y1="118" x2="170" y2="140" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowB)"/>
+
+        <!-- Main Comparator Block -->
+        <rect x="170" y="80" width="180" height="120" rx="12" fill="rgba(251,191,36,0.08)" stroke="#fbbf24" stroke-width="2.5"/>
+        <text x="260" y="115" fill="#fbbf24" text-anchor="middle" font-size="15" font-weight="700" font-family="Segoe UI">16-bit Magnitude</text>
+        <text x="260" y="135" fill="#fbbf24" text-anchor="middle" font-size="15" font-weight="700" font-family="Segoe UI">Comparator</text>
+        <text x="260" y="160" fill="#94a3b8" text-anchor="middle" font-size="11" font-family="Consolas">always @(*)</text>
+        <text x="260" y="180" fill="#94a3b8" text-anchor="middle" font-size="11" font-family="Consolas">combinational</text>
+
+        <!-- Output lines -->
+        <line x1="350" y1="120" x2="420" y2="100" stroke="#f87171" stroke-width="2" marker-end="url(#arrowR)"/>
+        <line x1="350" y1="160" x2="420" y2="180" stroke="#60a5fa" stroke-width="2" marker-end="url(#arrowBl)"/>
+
+        <!-- Output labels -->
+        <rect x="420" y="82" width="90" height="36" rx="8" fill="rgba(248,113,113,0.15)" stroke="#f87171" stroke-width="2"/>
+        <text x="465" y="105" fill="#f87171" text-anchor="middle" font-size="13" font-weight="700" font-family="Consolas">GT (bit1)</text>
+        <rect x="420" y="162" width="90" height="36" rx="8" fill="rgba(96,165,250,0.15)" stroke="#60a5fa" stroke-width="2"/>
+        <text x="465" y="185" fill="#60a5fa" text-anchor="middle" font-size="13" font-weight="700" font-family="Consolas">LT (bit0)</text>
+
+        <!-- Result output -->
+        <rect x="420" y="230" width="90" height="36" rx="8" fill="rgba(52,211,153,0.15)" stroke="#34d399" stroke-width="2"/>
+        <text x="465" y="253" fill="#34d399" text-anchor="middle" font-size="13" font-weight="700" font-family="Consolas">result[1:0]</text>
+        <line x1="465" y1="198" x2="465" y2="230" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4"/>
+        <line x1="465" y1="118" x2="465" y2="162" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4"/>
+
+        <!-- Internal cascade hint -->
+        <text x="260" y="240" fill="#64748b" text-anchor="middle" font-size="10" font-family="Segoe UI">MSB-first cascaded</text>
+        <text x="260" y="254" fill="#64748b" text-anchor="middle" font-size="10" font-family="Segoe UI">XOR + carry propagation</text>
+
+        <!-- Bit slice illustration -->
+        <rect x="180" y="270" width="160" height="70" rx="8" fill="rgba(255,255,255,0.03)" stroke="#334155" stroke-width="1"/>
+        <text x="260" y="290" fill="#94a3b8" text-anchor="middle" font-size="10" font-family="Consolas">bit[15]: a[15] XOR b[15]</text>
+        <text x="260" y="305" fill="#94a3b8" text-anchor="middle" font-size="10" font-family="Consolas">bit[14]: a[14] XOR b[14]</text>
+        <text x="260" y="320" fill="#64748b" text-anchor="middle" font-size="10" font-family="Consolas">... cascade to bit[0]</text>
+        <text x="260" y="335" fill="#64748b" text-anchor="middle" font-size="10" font-family="Consolas">First mismatch = decision</text>
+
+        <!-- Arrow markers -->
+        <defs>
+          <marker id="arrowP" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#a855f7"/></marker>
+          <marker id="arrowB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/></marker>
+          <marker id="arrowR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#f87171"/></marker>
+          <marker id="arrowBl" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#60a5fa"/></marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Truth Table -->
+  <div class="truth-table">
+    <h3>&#128202; Comparator Truth Table</h3>
+    <table class="tt">
+      <tr><th>Condition</th><th>result[1] (GT)</th><th>result[0] (LT)</th><th>result[1:0]</th><th>Binary</th><th>Meaning</th></tr>
+      <tr><td class="gt">a &gt; b</td><td>1</td><td>0</td><td class="res gt">2</td><td>2'b10</td><td class="gt">A is Greater</td></tr>
+      <tr><td class="lt">a &lt; b</td><td>0</td><td>1</td><td class="res lt">1</td><td>2'b01</td><td class="lt">A is Less</td></tr>
+      <tr><td class="eq">a == b</td><td>0</td><td>0</td><td class="res eq">0</td><td>2'b00</td><td class="eq">A Equals B</td></tr>
+    </table>
+  </div>
+
+  <div class="props-row">
+    <div class="prop"><strong>Combinational</strong>No clock needed</div>
+    <div class="prop"><strong>Synthesizable</strong>FPGA/ASIC ready</div>
+    <div class="prop"><strong>17 lines</strong>Minimal RTL</div>
+    <div class="prop"><strong>always @(*)</strong>All-input sensitive</div>
+    <div class="prop"><strong>2-bit output</strong>Encodes 3 states</div>
+  </div>
+</div>
+</body>
+</html>

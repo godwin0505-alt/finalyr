@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 7 - Verilator Compilation Pipeline</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px; color: #e2e8f0; }
+  .container { width: 1250px; }
+  .title { text-align: center; font-size: 26px; font-weight: 700; color: #e2e8f0; margin-bottom: 40px; }
+  .subtitle { text-align: center; font-size: 14px; color: #94a3b8; margin-top: -30px; margin-bottom: 36px; }
+
+  /* Main Pipeline */
+  .pipeline { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 40px; }
+  .stage { border-radius: 14px; padding: 24px 20px; text-align: center; border: 2px solid; min-width: 180px; position: relative; }
+  .stage-num { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #1e293b; padding: 2px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; border: 1px solid; }
+  .stage h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; margin-top: 8px; }
+  .stage p { font-size: 11px; opacity: 0.8; line-height: 1.4; }
+  .stage .file { font-family: 'Consolas', monospace; font-size: 12px; margin-top: 8px; padding: 3px 10px; border-radius: 6px; display: inline-block; }
+
+  .s-verilog { background: rgba(168, 85, 247, 0.15); border-color: #a855f7; }
+  .s-verilog .stage-num { color: #a855f7; border-color: #a855f7; }
+  .s-verilog .file { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+
+  .s-verilator { background: rgba(59, 130, 246, 0.15); border-color: #3b82f6; }
+  .s-verilator .stage-num { color: #3b82f6; border-color: #3b82f6; }
+  .s-verilator .file { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+
+  .s-cpp { background: rgba(34, 197, 94, 0.15); border-color: #22c55e; }
+  .s-cpp .stage-num { color: #22c55e; border-color: #22c55e; }
+  .s-cpp .file { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+
+  .s-binary { background: rgba(251, 146, 60, 0.15); border-color: #fb923c; }
+  .s-binary .stage-num { color: #fb923c; border-color: #fb923c; }
+  .s-binary .file { background: rgba(251, 146, 60, 0.2); color: #fdba74; }
+
+  .arrow { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 0 8px; }
+  .arrow-line { width: 40px; height: 3px; border-radius: 2px; }
+  .arrow-head { font-size: 20px; }
+  .arrow-label { font-size: 10px; font-weight: 600; }
+  .a-purple .arrow-line { background: #a855f7; }
+  .a-purple .arrow-head, .a-purple .arrow-label { color: #a855f7; }
+  .a-blue .arrow-line { background: #3b82f6; }
+  .a-blue .arrow-head, .a-blue .arrow-label { color: #3b82f6; }
+  .a-green .arrow-line { background: #22c55e; }
+  .a-green .arrow-head, .a-green .arrow-label { color: #22c55e; }
+
+  /* Command Box */
+  .cmd-box { margin-top: 16px; display: flex; gap: 16px; justify-content: center; }
+  .cmd { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px 24px; font-family: 'Consolas', monospace; font-size: 13px; color: #a5f3fc; position: relative; }
+  .cmd .label { position: absolute; top: -10px; left: 12px; background: #0f172a; padding: 0 8px; font-size: 10px; color: #64748b; font-family: 'Segoe UI', sans-serif; font-weight: 600; }
+  .cmd .comment { color: #64748b; }
+
+  /* Sample I/O */
+  .io-section { margin-top: 32px; display: flex; gap: 20px; justify-content: center; }
+  .io-box { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; min-width: 340px; }
+  .io-box h4 { font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .io-box pre { font-family: 'Consolas', monospace; font-size: 13px; line-height: 1.6; }
+  .io-box .prompt { color: #22c55e; }
+  .io-box .output { color: #fbbf24; }
+  .io-box .hl { color: #f472b6; font-weight: 700; }
+
+  .plus-box { display: flex; align-items: center; font-size: 11px; color: #94a3b8; gap: 6px; flex-direction: column; }
+  .plus-icon { background: #334155; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #e2e8f0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Verilator HDL Compilation Pipeline</div>
+  <div class="subtitle">Verilog RTL &rarr; Cycle-Accurate C++ &rarr; Native Machine Binary</div>
+
+  <!-- Main Pipeline -->
+  <div class="pipeline">
+    <div class="stage s-verilog">
+      <div class="stage-num">STAGE 1</div>
+      <h3>&#128220; Verilog Source</h3>
+      <p>Behavioral RTL<br>16-bit comparator</p>
+      <div class="file">comparator.v</div>
+    </div>
+
+    <div class="arrow a-purple">
+      <div class="arrow-label">verilator</div>
+      <div style="display:flex; align-items:center;"><div class="arrow-line"></div><span class="arrow-head">&#9654;</span></div>
+      <div class="arrow-label">--cc --exe</div>
+    </div>
+
+    <div class="stage s-verilator">
+      <div class="stage-num">STAGE 2</div>
+      <h3>&#9881; Generated C++</h3>
+      <p>Auto-generated<br>cycle model + header</p>
+      <div class="file">Vcomparator.h/.cpp</div>
+    </div>
+
+    <div class="arrow a-blue">
+      <div class="arrow-label">+</div>
+      <div style="display:flex; align-items:center;"><div class="arrow-line"></div><span class="arrow-head">&#9654;</span></div>
+      <div class="arrow-label">sim_main.cpp</div>
+    </div>
+
+    <div class="stage s-cpp">
+      <div class="stage-num">STAGE 3</div>
+      <h3>&#128736; g++ Compile</h3>
+      <p>Compile & link<br>via Makefile</p>
+      <div class="file">make -C obj_dir</div>
+    </div>
+
+    <div class="arrow a-green">
+      <div class="arrow-label">link</div>
+      <div style="display:flex; align-items:center;"><div class="arrow-line"></div><span class="arrow-head">&#9654;</span></div>
+      <div class="arrow-label">output</div>
+    </div>
+
+    <div class="stage s-binary">
+      <div class="stage-num">STAGE 4</div>
+      <h3>&#9889; Native Binary</h3>
+      <p>Executable<br>CLI application</p>
+      <div class="file">obj_dir/Vcomparator</div>
+    </div>
+  </div>
+
+  <!-- Build Commands -->
+  <div class="cmd-box">
+    <div class="cmd">
+      <div class="label">Build Command</div>
+      <span class="comment"># Compile Verilog to C++, then build executable</span><br>
+      verilator -Wall --cc comparator.v --exe sim_main.cpp<br>
+      make -C obj_dir -f Vcomparator.mk Vcomparator
+    </div>
+  </div>
+
+  <!-- Sample I/O -->
+  <div class="io-section">
+    <div class="io-box">
+      <h4>&#128154; Example 1: A &gt; B</h4>
+      <pre><span class="prompt">$</span> ./obj_dir/Vcomparator 24.5 24.0
+<span class="output">Result: <span class="hl">A&gt;B</span></span>
+<span class="output">Fixed A: <span class="hl">6272</span></span>
+<span class="output">Fixed B: <span class="hl">6144</span></span></pre>
+    </div>
+
+    <div class="io-box">
+      <h4>&#128309; Example 2: A &lt; B</h4>
+      <pre><span class="prompt">$</span> ./obj_dir/Vcomparator 24.5 25.0
+<span class="output">Result: <span class="hl">A&lt;B</span></span>
+<span class="output">Fixed A: <span class="hl">6272</span></span>
+<span class="output">Fixed B: <span class="hl">6400</span></span></pre>
+    </div>
+
+    <div class="io-box">
+      <h4>&#128992; Example 3: A == B</h4>
+      <pre><span class="prompt">$</span> ./obj_dir/Vcomparator 25.0 25.0
+<span class="output">Result: <span class="hl">A==B</span></span>
+<span class="output">Fixed A: <span class="hl">6400</span></span>
+<span class="output">Fixed B: <span class="hl">6400</span></span></pre>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+# .gitignore
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+.cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+server.log
+verilator_out.txt
+
+# Temporary
+temp/
+tmp/
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv
+
+# Verilator
+obj_dir/
+*.o
+*.a
+
+# Database
+*.sql
+*.db
+
+# Archive
+archive/

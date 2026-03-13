@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Tools & Libraries Summary</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f8f9fa;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:30px}
+  .container{width:1280px}
+  .title{text-align:center;font-size:26px;font-weight:700;color:#1e293b;margin-bottom:6px}
+  .subtitle{text-align:center;font-size:14px;color:#64748b;margin-bottom:28px}
+  .section{margin-bottom:24px}
+  .section-head{font-size:16px;font-weight:700;padding:10px 16px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:8px}
+  .sh-hw{background:linear-gradient(135deg,#f3e8ff,#e9d5ff);color:#6b21a8}
+  .sh-be{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#166534}
+  .sh-fe{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af}
+  .sh-data{background:linear-gradient(135deg,#fff7ed,#fed7aa);color:#9a3412}
+  .sh-devops{background:linear-gradient(135deg,#f0fdfa,#ccfbf1);color:#0f766e}
+  table{width:100%;border-collapse:collapse;font-size:12px;border:1px solid #e2e8f0;border-radius:0 0 10px 10px;overflow:hidden}
+  th{background:#f1f5f9;padding:8px 12px;text-align:left;font-weight:700;color:#475569;border-bottom:2px solid #e2e8f0;font-size:11px}
+  td{padding:8px 12px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+  td:first-child{font-weight:700;color:#1e293b;white-space:nowrap}
+  td:nth-child(2){font-family:Consolas,monospace;color:#6b21a8;font-size:11px}
+  .tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:4px}
+  .tag-core{background:#dbeafe;color:#1d4ed8}
+  .tag-ui{background:#fce7f3;color:#9d174d}
+  .tag-data{background:#fef3c7;color:#92400e}
+  .tag-hdl{background:#f3e8ff;color:#6b21a8}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Complete Tools &amp; Libraries Reference</div>
+  <div class="subtitle">Every tool, library, and framework used in TempWatch Insights with hint explanations</div>
+
+  <!-- Hardware / Verilog -->
+  <div class="section">
+    <div class="section-head sh-hw">&#128268; Hardware / HDL Layer</div>
+    <table>
+      <tr><th>Tool/Library</th><th>Version</th><th>What It Does</th><th>Why It Was Used</th></tr>
+      <tr><td>Verilog (IEEE 1364)</td><td>-</td><td>Hardware description language for the 16-bit Q8.8 comparator module</td><td>Industry-standard RTL language; synthesizable to FPGA/ASIC</td></tr>
+      <tr><td>Verilator <span class="tag tag-hdl">KEY</span></td><td>5.x</td><td>Compiles Verilog RTL to cycle-accurate C++ model, then to native binary</td><td>Fastest open-source Verilog simulator; produces executable binary callable from Node.js</td></tr>
+      <tr><td>g++ (GCC)</td><td>12+</td><td>Compiles Verilator-generated C++ and sim_main.cpp to native executable</td><td>Standard C++ compiler; links Verilator model with test harness</td></tr>
+      <tr><td>sim_main.cpp</td><td>custom</td><td>C++ harness: parses CLI args, Q8.8 encode, drives ports, reads result, prints stdout</td><td>Bridge between command-line and Verilog simulation; handles fixed-point conversion</td></tr>
+    </table>
+  </div>
+
+  <!-- Backend -->
+  <div class="section">
+    <div class="section-head sh-be">&#9881; Backend Layer</div>
+    <table>
+      <tr><th>Tool/Library</th><th>Version</th><th>What It Does</th><th>Why It Was Used</th></tr>
+      <tr><td>Node.js</td><td>18+</td><td>JavaScript runtime with event-loop for async I/O</td><td>Non-blocking architecture handles concurrent API requests + Verilator spawns</td></tr>
+      <tr><td>Express <span class="tag tag-core">CORE</span></td><td>5.2.1</td><td>Minimal REST framework; middleware pipeline (cors, json, logging, routes, error)</td><td>Lightweight, flexible, with Express 5's improved async/await support</td></tr>
+      <tr><td>TypeScript</td><td>5.9.3</td><td>Static typing for backend; catches API contract errors at compile time</td><td>Type-safe Prisma queries, request/response interfaces, shared contracts with frontend</td></tr>
+      <tr><td>Prisma ORM <span class="tag tag-data">DATA</span></td><td>7.2.0</td><td>Auto-generated typed database client from schema.prisma</td><td>Type-safe queries; $queryRaw for aggregations; createMany for batch inserts</td></tr>
+      <tr><td>@prisma/adapter-libsql</td><td>latest</td><td>SQLite adapter via LibSQL protocol</td><td>Zero-config embedded database; no separate DB server needed</td></tr>
+      <tr><td>child_process.spawn()</td><td>built-in</td><td>Non-blocking invocation of Verilator binary as child process</td><td>Captures stdout/stderr without blocking Express event loop</td></tr>
+      <tr><td>csv-parse/sync</td><td>latest</td><td>Synchronous CSV parsing for seed.ts data ingestion</td><td>Batch processing of NASA POWER CSV files during database seeding</td></tr>
+      <tr><td>cors</td><td>latest</td><td>Cross-Origin Resource Sharing middleware</td><td>Allows frontend (:8080) to call backend (:5000)</td></tr>
+      <tr><td>dotenv</td><td>latest</td><td>Loads .env variables into process.env</td><td>Secure configuration (DATABASE_URL, PORT, ENABLE_LOGS)</td></tr>
+    </table>
+  </div>
+
+  <!-- Frontend -->
+  <div class="section">
+    <div class="section-head sh-fe">&#127760; Frontend Layer</div>
+    <table>
+      <tr><th>Tool/Library</th><th>Version</th><th>What It Does</th><th>Why It Was Used</th></tr>
+      <tr><td>React <span class="tag tag-core">CORE</span></td><td>18.3.1</td><td>Component-based UI with hooks (useState, useEffect, useMemo)</td><td>Declarative rendering; component reuse across 5 dashboard views</td></tr>
+      <tr><td>Vite</td><td>5.4.19</td><td>ES module-native build tool with instant HMR</td><td>10-100x faster than Webpack; sub-300ms dev server start</td></tr>
+      <tr><td>TypeScript</td><td>5.8.3</td><td>Static typing for frontend components and API interfaces</td><td>Compile-time safety for complex nested data shapes (PredictionData, ExogenousData)</td></tr>
+      <tr><td>Tailwind CSS</td><td>3.4.17</td><td>Utility-first CSS framework; all styling via className</td><td>Rapid prototyping; consistent design system; tiny production bundle via purging</td></tr>
+      <tr><td>Chart.js <span class="tag tag-ui">VIZ</span></td><td>4.5.1</td><td>Canvas-rendered charts: Line (daily), Bar (monthly deviation, forecast), dual-axis</td><td>Performant canvas rendering; supports stacked/diverging bars and multi-axis</td></tr>
+      <tr><td>react-chartjs-2</td><td>latest</td><td>React wrapper for Chart.js (&lt;Line&gt;, &lt;Bar&gt; components)</td><td>Declarative Chart.js usage with React state binding</td></tr>
+      <tr><td>Framer Motion <span class="tag tag-ui">ANIM</span></td><td>latest</td><td>AnimatePresence, motion.div, staggered reveals, pipeline animation</td><td>Smooth transitions between dashboard views; Comparator Playground bit animation</td></tr>
+      <tr><td>shadcn/ui (Radix)</td><td>48 comp.</td><td>Accessible UI primitives: Button, Card, Select, Dialog, Table, Tabs, Toast</td><td>Accessibility compliance; composable components; copy-paste model (no lock-in)</td></tr>
+      <tr><td>TanStack React Query</td><td>5.83</td><td>Server-state caching, auto-refetch, stale-while-revalidate</td><td>2-second polling for Debug Panel; automatic loading/error states</td></tr>
+      <tr><td>React Router DOM</td><td>6.30.1</td><td>Client-side SPA routing</td><td>Single-page app navigation between dashboard views</td></tr>
+      <tr><td>Lucide React</td><td>latest</td><td>Icon library (Thermometer, Flame, Snowflake, CircuitBoard, etc.)</td><td>Consistent iconography across all dashboard cards and headers</td></tr>
+      <tr><td>React Hook Form + Zod</td><td>7.61 / 3.25</td><td>Schema-validated form inputs</td><td>Type-safe form handling with runtime validation</td></tr>
+    </table>
+  </div>
+
+  <!-- Data -->
+  <div class="section">
+    <div class="section-head sh-data">&#128202; Data &amp; ML Layer</div>
+    <table>
+      <tr><th>Tool/Library</th><th>Version</th><th>What It Does</th><th>Why It Was Used</th></tr>
+      <tr><td>NASA POWER API</td><td>-</td><td>Satellite-derived climate data: temperature, humidity, precipitation, wind, pressure</td><td>Authoritative source for 25-year historical climate records (2000-2024)</td></tr>
+      <tr><td>SARIMAX <span class="tag tag-data">MODEL</span></td><td>statsmodels</td><td>Seasonal ARIMA with exogenous variables; order(1,1,1), seasonal(1,1,1,12)</td><td>Explicitly models 12-month seasonality + external climate regressors; interpretable</td></tr>
+      <tr><td>SQLite (LibSQL)</td><td>3.x</td><td>Embedded relational database; zero configuration</td><td>No separate server; file-based; ideal for single-server deployment</td></tr>
+    </table>
+  </div>
+
+  <!-- DevOps -->
+  <div class="section">
+    <div class="section-head sh-devops">&#128230; DevOps &amp; Deployment</div>
+    <table>
+      <tr><th>Tool/Library</th><th>Version</th><th>What It Does</th><th>Why It Was Used</th></tr>
+      <tr><td>Docker</td><td>latest</td><td>Multi-stage container build (node:22-bullseye)</td><td>Reproducible deployment; includes Verilator build step</td></tr>
+      <tr><td>ESLint</td><td>latest</td><td>Static analysis / linting for TypeScript code</td><td>Code quality enforcement; catches common mistakes</td></tr>
+      <tr><td>PostCSS + Autoprefixer</td><td>latest</td><td>CSS processing pipeline for Tailwind</td><td>Browser compatibility; Tailwind JIT compilation</td></tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

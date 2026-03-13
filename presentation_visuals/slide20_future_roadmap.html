@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 20 - Future Scope Roadmap</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f8f9fa;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:40px}
+  .container{width:1250px}
+  .title{text-align:center;font-size:26px;font-weight:700;color:#1e293b;margin-bottom:8px}
+  .subtitle{text-align:center;font-size:14px;color:#64748b;margin-bottom:36px}
+
+  /* Timeline */
+  .timeline{position:relative;padding-left:60px}
+  .timeline::before{content:'';position:absolute;left:28px;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,#22c55e,#3b82f6,#a855f7,#f97316,#ec4899,#06b6d4);border-radius:2px}
+  .tl-item{position:relative;margin-bottom:20px;display:flex;align-items:flex-start;gap:20px}
+  .tl-dot{position:absolute;left:-40px;top:12px;width:20px;height:20px;border-radius:50%;border:3px solid;display:flex;align-items:center;justify-content:center}
+  .tl-dot.done{border-color:#22c55e;background:#dcfce7}
+  .tl-dot.done::after{content:'';width:8px;height:8px;border-radius:50%;background:#22c55e}
+  .tl-dot.future{border-color:#94a3b8;background:#f1f5f9}
+  .tl-dot.future::after{content:'';width:8px;height:8px;border-radius:50%;background:#94a3b8}
+
+  .tl-content{flex:1;background:#fff;border-radius:14px;padding:18px 22px;border:1.5px solid;box-shadow:0 2px 8px rgba(0,0,0,.04);display:flex;gap:16px;align-items:flex-start}
+  .tl-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+  .tl-text h4{font-size:15px;font-weight:700;margin-bottom:4px}
+  .tl-text p{font-size:12px;line-height:1.5}
+  .tl-text .tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;margin-top:6px}
+
+  .done-card{border-color:#bbf7d0}
+  .done-card h4{color:#166534}
+  .done-card p{color:#166534}
+  .done-card .tag{background:#dcfce7;color:#166534}
+
+  .f1{border-color:#93c5fd}.f1 h4{color:#1d4ed8}.f1 p{color:#1e40af}.f1 .tag{background:#dbeafe;color:#1d4ed8}
+  .f2{border-color:#c4b5fd}.f2 h4{color:#6d28d9}.f2 p{color:#5b21b6}.f2 .tag{background:#f3e8ff;color:#6d28d9}
+  .f3{border-color:#fdba74}.f3 h4{color:#c2410c}.f3 p{color:#9a3412}.f3 .tag{background:#fff7ed;color:#c2410c}
+  .f4{border-color:#f9a8d4}.f4 h4{color:#9d174d}.f4 p{color:#9d174d}.f4 .tag{background:#fce7f3;color:#9d174d}
+  .f5{border-color:#67e8f9}.f5 h4{color:#0e7490}.f5 p{color:#0e7490}.f5 .tag{background:#ecfeff;color:#0e7490}
+
+  .status-row{display:flex;gap:20px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+  .status-badge{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:8px 16px;border-radius:8px;border:1px solid}
+  .sb-done{background:#f0fdf4;border-color:#22c55e;color:#166534}
+  .sb-future{background:#f1f5f9;border-color:#94a3b8;color:#475569}
+  .dot-s{width:10px;height:10px;border-radius:50%}
+  .dot-g{background:#22c55e}
+  .dot-gr{background:#94a3b8}
+
+  .thank-you{margin-top:32px;text-align:center;padding:20px;background:linear-gradient(135deg,#dbeafe,#f3e8ff);border-radius:16px;border:2px solid #c7d2fe}
+  .thank-you h2{font-size:24px;font-weight:800;color:#4338ca}
+  .thank-you p{font-size:14px;color:#6366f1;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Conclusion &amp; Future Scope</div>
+  <div class="subtitle">What we delivered and where the project can evolve</div>
+
+  <div class="timeline">
+    <!-- Delivered -->
+    <div class="tl-item">
+      <div class="tl-dot done"></div>
+      <div class="tl-content done-card">
+        <div class="tl-icon">&#9989;</div>
+        <div class="tl-text">
+          <h4>Delivered: Hardware-Software Co-Design System</h4>
+          <p>Verilog Q8.8 comparator compiled via Verilator, integrated with Node.js backend, React dashboard with 5 analytical views, SARIMAX forecasting (2025-2035), comprehensive comparison audit logging, Docker containerization.</p>
+          <div class="tag">CURRENT STATE &mdash; COMPLETE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Future 1 -->
+    <div class="tl-item">
+      <div class="tl-dot future"></div>
+      <div class="tl-content f1">
+        <div class="tl-icon">&#128268;</div>
+        <div class="tl-text">
+          <h4>Extend Verilog to Full Temperature ALU</h4>
+          <p>Add arithmetic operations (addition, subtraction, averaging) in hardware. Build a complete temperature processing unit in Verilog that can compute averages and deviations at the RTL level.</p>
+          <div class="tag">HARDWARE ENHANCEMENT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Future 2 -->
+    <div class="tl-item">
+      <div class="tl-dot future"></div>
+      <div class="tl-content f2">
+        <div class="tl-icon">&#128313;</div>
+        <div class="tl-text">
+          <h4>FPGA Synthesis &amp; Physical Demo</h4>
+          <p>Synthesize comparator.v to Xilinx or Intel FPGA. Demonstrate live temperature comparison on physical hardware with UART/USB communication to the backend server.</p>
+          <div class="tag">HARDWARE DEPLOYMENT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Future 3 -->
+    <div class="tl-item">
+      <div class="tl-dot future"></div>
+      <div class="tl-content f3">
+        <div class="tl-icon">&#127777;</div>
+        <div class="tl-text">
+          <h4>Real-Time Weather API Integration</h4>
+          <p>Connect to OpenWeatherMap or NASA POWER live APIs for real-time temperature monitoring. Transform from historical analysis tool into live climate monitoring dashboard.</p>
+          <div class="tag">DATA INTEGRATION</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Future 4 -->
+    <div class="tl-item">
+      <div class="tl-dot future"></div>
+      <div class="tl-content f4">
+        <div class="tl-icon">&#129302;</div>
+        <div class="tl-text">
+          <h4>Advanced ML Models (LSTM, Prophet)</h4>
+          <p>Implement deep learning (LSTM/GRU) and Facebook Prophet alongside SARIMAX for model comparison. Add ensemble predictions and confidence interval visualization.</p>
+          <div class="tag">ML ENHANCEMENT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Future 5 -->
+    <div class="tl-item">
+      <div class="tl-dot future"></div>
+      <div class="tl-content f5">
+        <div class="tl-icon">&#9729;</div>
+        <div class="tl-text">
+          <h4>Cloud Deployment with CI/CD</h4>
+          <p>Deploy to AWS/GCP with automated CI/CD pipelines. Add user authentication, multi-tenant support, and PostgreSQL for production-scale data storage.</p>
+          <div class="tag">INFRASTRUCTURE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-row">
+    <div class="status-badge sb-done"><span class="dot-s dot-g"></span> Delivered</div>
+    <div class="status-badge sb-future"><span class="dot-s dot-gr"></span> Future Scope</div>
+  </div>
+
+  <div class="thank-you">
+    <h2>Thank You</h2>
+    <p>Questions &amp; Live Demo Available</p>
+  </div>
+</div>
+</body>
+</html>

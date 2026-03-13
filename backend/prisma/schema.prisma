@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+
+// Historical Climate Data (2000-2024)
+model ClimateData {
+  id            Int      @id @default(autoincrement())
+  date          DateTime @unique
+  year          Int
+  month         Int
+  day           Int
+  temperature   Float    // Temperature in °C
+  humidity      Float    // Relative Humidity (RH2M) in %
+  precipitation Float    // Precipitation (PRECTOTCORR) in mm
+  windSpeed     Float    // Wind Speed at 2m (WS2M) in m/s
+  pressure      Float    // Surface Pressure (PS) in kPa
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([year, month])
+  @@index([date])
+}
+
+// Forecast Data (2025-2035)
+model ForecastData {
+  id            Int      @id @default(autoincrement())
+  year          Int
+  month         Int
+  temperature   Float    // Forecasted temperature in °C
+  humidity      Float?   // Optional humidity forecast
+  precipitation Float?   // Optional precipitation forecast
+  windSpeed     Float?   // Optional wind speed forecast
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([year, month])
+  @@index([year])
+}
+
+// Comparison Logs (Verilator execution history)
+model ComparisonLog {
+  id              Int      @id @default(autoincrement())
+  tempA           Float
+  tempB           Float
+  fixedPointA     Int
+  fixedPointB     Int
+  result          String   // "A>B", "A<B", "A==B"
+  executionTimeMs Float
+  raw8Mode        Boolean  @default(false)
+  timestamp       DateTime @default(now())
+
+  @@index([timestamp])
+}

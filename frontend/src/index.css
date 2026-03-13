@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 38 92% 50%;
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 14%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 187 85% 43%;
+    --accent-foreground: 222 47% 6%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 18%;
+    --input: 217 33% 18%;
+    --ring: 38 92% 50%;
+
+    --radius: 0.75rem;
+
+    /* Custom dashboard tokens */
+    --temp-hot: 15 95% 55%;
+    --temp-warm: 38 92% 50%;
+    --temp-cool: 187 85% 43%;
+    --temp-cold: 210 85% 55%;
+    
+    --chart-gradient-hot-start: 15 95% 60%;
+    --chart-gradient-hot-end: 38 92% 50%;
+    --chart-gradient-cold-start: 210 85% 55%;
+    --chart-gradient-cold-end: 187 85% 43%;
+    
+    --glow-primary: 38 92% 50%;
+    --glow-accent: 187 85% 43%;
+    
+    --circuit-line: 217 33% 20%;
+    --circuit-node: 38 92% 50%;
+
+    --sidebar-background: 222 47% 5%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 38 92% 50%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 217 33% 12%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 15%;
+    --sidebar-ring: 38 92% 50%;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50 shadow-2xl;
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3),
+                0 0 40px hsl(var(--primary) / 0.1);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px hsl(var(--accent) / 0.3),
+                0 0 40px hsl(var(--accent) / 0.1);
+  }
+
+  .circuit-pattern {
+    background-image: 
+      linear-gradient(to right, hsl(var(--circuit-line) / 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--circuit-line) / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .circuit-dots {
+    background-image: radial-gradient(circle at center, hsl(var(--circuit-node) / 0.15) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .temp-gradient-hot {
+    background: linear-gradient(135deg, hsl(var(--temp-hot)), hsl(var(--temp-warm)));
+  }
+
+  .temp-gradient-cold {
+    background: linear-gradient(135deg, hsl(var(--temp-cold)), hsl(var(--temp-cool)));
+  }
+
+  .stat-card {
+    @apply glass-card rounded-xl p-6 relative overflow-hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    @apply absolute inset-0 opacity-5;
+    background: radial-gradient(circle at top right, hsl(var(--primary)), transparent 50%);
+  }
+
+  .chart-container {
+    @apply glass-card rounded-xl p-6 relative;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300;
+    @apply text-muted-foreground hover:text-foreground hover:bg-secondary/50;
+  }
+
+  .nav-item.active {
+    @apply text-foreground bg-secondary glow-primary;
+  }
+
+  .data-label {
+    @apply font-mono text-sm text-muted-foreground;
+  }
+
+  .data-value {
+    @apply font-mono text-2xl font-bold text-foreground;
+  }
+
+  .status-safe {
+    @apply text-emerald-400 bg-emerald-400/10 border-emerald-400/30;
+  }
+
+  .status-warning {
+    @apply text-amber-400 bg-amber-400/10 border-amber-400/30;
+  }
+
+  .status-harmful {
+    @apply text-red-400 bg-red-400/10 border-red-400/30;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+}
+
+@layer utilities {
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+    50% {
+      opacity: 0.8;
+      filter: brightness(1.2);
+    }
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.5s ease-out;
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-in-left {
+    animation: slide-in-left 0.3s ease-out;
+  }
+
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .text-gradient-hot {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--temp-hot)), hsl(var(--temp-warm)));
+  }
+
+  .text-gradient-cold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--temp-cold)), hsl(var(--temp-cool)));
+  }
+
+  .text-gradient-primary {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  }
+}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 5 - Frontend Tech Stack</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px; }
+  .container { width: 1200px; }
+  .title { text-align: center; font-size: 26px; font-weight: 700; color: #1e293b; margin-bottom: 32px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .card { border-radius: 14px; padding: 24px; text-align: center; border: 2px solid; transition: transform 0.2s; }
+  .card:hover { transform: translateY(-3px); }
+  .card-icon { font-size: 44px; margin-bottom: 12px; }
+  .card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .card .version { font-size: 12px; font-weight: 600; opacity: 0.7; margin-bottom: 8px; }
+  .card p { font-size: 12px; line-height: 1.5; }
+  .card .why { font-size: 11px; font-style: italic; margin-top: 8px; padding-top: 8px; border-top: 1px dashed; opacity: 0.7; }
+
+  .react { background: #eff6ff; border-color: #60a5fa; color: #1e40af; }
+  .vite { background: #fefce8; border-color: #facc15; color: #854d0e; }
+  .ts { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
+  .tailwind { background: #f0fdfa; border-color: #2dd4bf; color: #0f766e; }
+  .chartjs { background: #fef2f2; border-color: #f87171; color: #b91c1c; }
+  .framer { background: #fdf4ff; border-color: #e879f9; color: #a21caf; }
+  .shadcn { background: #f8fafc; border-color: #94a3b8; color: #334155; }
+  .query { background: #fff7ed; border-color: #fb923c; color: #9a3412; }
+  .router { background: #fef2f2; border-color: #ef4444; color: #991b1b; }
+  .zod { background: #eff6ff; border-color: #6366f1; color: #4338ca; }
+
+  .section-label { grid-column: 1 / -1; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 2px; padding: 8px 0 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Frontend Tech Stack</div>
+  <div class="grid">
+    <div class="section-label">Core Framework & Build</div>
+
+    <div class="card react">
+      <div class="card-icon">&#9883;</div>
+      <h3>React</h3>
+      <div class="version">v18.3.1</div>
+      <p>Component-based UI library with hooks (useState, useEffect, useMemo)</p>
+      <div class="why">Why: Industry standard, rich ecosystem, declarative rendering</div>
+    </div>
+
+    <div class="card vite">
+      <div class="card-icon">&#9889;</div>
+      <h3>Vite</h3>
+      <div class="version">v5.4.19</div>
+      <p>ES module-native build tool with instant HMR (&lt;300ms cold start)</p>
+      <div class="why">Why: 10-100x faster than Webpack for dev server startup</div>
+    </div>
+
+    <div class="card ts">
+      <div class="card-icon">&#128220;</div>
+      <h3>TypeScript</h3>
+      <div class="version">v5.8.3</div>
+      <p>Static typing catches API interface mismatches at compile time</p>
+      <div class="why">Why: Type-safe API contracts between frontend &amp; backend</div>
+    </div>
+
+    <div class="card tailwind">
+      <div class="card-icon">&#127912;</div>
+      <h3>Tailwind CSS</h3>
+      <div class="version">v3.4.17</div>
+      <p>Utility-first CSS framework; no custom stylesheet maintenance needed</p>
+      <div class="why">Why: Rapid prototyping, consistent design, small bundle size</div>
+    </div>
+
+    <div class="section-label">Visualization & Animation</div>
+
+    <div class="card chartjs">
+      <div class="card-icon">&#128200;</div>
+      <h3>Chart.js</h3>
+      <div class="version">v4.5.1</div>
+      <p>Canvas-rendered charts: Line (daily temps), Bar (monthly deviations), Diverging bars</p>
+      <div class="why">Why: Performant canvas rendering for large datasets</div>
+    </div>
+
+    <div class="card framer">
+      <div class="card-icon">&#127916;</div>
+      <h3>Framer Motion</h3>
+      <div class="version">latest</div>
+      <p>AnimatePresence for view transitions, staggered card reveals, hover animations</p>
+      <div class="why">Why: Declarative animations integrated with React lifecycle</div>
+    </div>
+
+    <div class="card shadcn">
+      <div class="card-icon">&#128736;</div>
+      <h3>shadcn/ui</h3>
+      <div class="version">48 components</div>
+      <p>Radix UI-based: Button, Card, Dialog, Table, Tabs, Select, Tooltip, Toast</p>
+      <div class="why">Why: Accessible, composable, owns-your-code model</div>
+    </div>
+
+    <div class="card query">
+      <div class="card-icon">&#128259;</div>
+      <h3>TanStack Query</h3>
+      <div class="version">v5.83</div>
+      <p>Server-state caching, auto-refetching, stale-while-revalidate strategy</p>
+      <div class="why">Why: Eliminates manual fetch/loading/error state management</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 3 - Project Objectives Checklist</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px; }
+  .container { width: 1200px; }
+  .header { text-align: center; margin-bottom: 32px; }
+  .header h1 { font-size: 28px; color: #1e293b; font-weight: 700; }
+  .header p { font-size: 14px; color: #64748b; margin-top: 6px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { display: flex; align-items: flex-start; gap: 16px; padding: 20px; border-radius: 14px; border: 1px solid; transition: transform 0.2s; }
+  .card:hover { transform: translateY(-2px); }
+  .number { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; color: white; flex-shrink: 0; }
+  .icon { font-size: 28px; flex-shrink: 0; }
+  .card-content { flex: 1; }
+  .card-content h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .card-content p { font-size: 13px; line-height: 1.5; }
+  .c1 { background: #eff6ff; border-color: #93c5fd; }
+  .c1 .number { background: #3b82f6; }
+  .c1 h3 { color: #1d4ed8; }
+  .c1 p { color: #1e40af; }
+  .c2 { background: #f5f3ff; border-color: #c4b5fd; }
+  .c2 .number { background: #8b5cf6; }
+  .c2 h3 { color: #6d28d9; }
+  .c2 p { color: #5b21b6; }
+  .c3 { background: #ecfdf5; border-color: #6ee7b7; }
+  .c3 .number { background: #10b981; }
+  .c3 h3 { color: #047857; }
+  .c3 p { color: #065f46; }
+  .c4 { background: #fff7ed; border-color: #fdba74; }
+  .c4 .number { background: #f97316; }
+  .c4 h3 { color: #c2410c; }
+  .c4 p { color: #9a3412; }
+  .c5 { background: #fef2f2; border-color: #fca5a5; }
+  .c5 .number { background: #ef4444; }
+  .c5 h3 { color: #dc2626; }
+  .c5 p { color: #b91c1c; }
+  .c6 { background: #f0fdfa; border-color: #5eead4; }
+  .c6 .number { background: #14b8a6; }
+  .c6 h3 { color: #0d9488; }
+  .c6 p { color: #0f766e; }
+  .c7 { background: #fdf4ff; border-color: #e879f9; }
+  .c7 .number { background: #d946ef; }
+  .c7 h3 { color: #a21caf; }
+  .c7 p { color: #86198f; }
+  .full-width { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Project Objectives</h1>
+    <p>Seven primary objectives driving the TempWatch Insights system</p>
+  </div>
+  <div class="grid">
+    <div class="card c1">
+      <div class="number">1</div>
+      <span class="icon">&#128268;</span>
+      <div class="card-content">
+        <h3>Design Verilog HDL Comparator</h3>
+        <p>16-bit Q8.8 fixed-point temperature comparator in RTL Verilog with combinational logic</p>
+      </div>
+    </div>
+    <div class="card c2">
+      <div class="number">2</div>
+      <span class="icon">&#9881;&#65039;</span>
+      <div class="card-content">
+        <h3>Compile via Verilator</h3>
+        <p>Convert HDL to native C++ binary using Verilator for software-invocable hardware execution</p>
+      </div>
+    </div>
+    <div class="card c3">
+      <div class="number">3</div>
+      <span class="icon">&#128421;</span>
+      <div class="card-content">
+        <h3>Build REST API Backend</h3>
+        <p>Node.js/Express/Prisma server that spawns the compiled Verilog binary via child_process</p>
+      </div>
+    </div>
+    <div class="card c4">
+      <div class="number">4</div>
+      <span class="icon">&#128450;</span>
+      <div class="card-content">
+        <h3>Ingest 25 Years of Climate Data</h3>
+        <p>Historical NASA POWER data (2000-2024): temperature, humidity, precipitation, wind, pressure</p>
+      </div>
+    </div>
+    <div class="card c5">
+      <div class="number">5</div>
+      <span class="icon">&#128200;</span>
+      <div class="card-content">
+        <h3>Serve SARIMAX Forecasts</h3>
+        <p>Pre-generated SARIMAX temperature predictions (2025-2035) with seasonal + exogenous factors</p>
+      </div>
+    </div>
+    <div class="card c6">
+      <div class="number">6</div>
+      <span class="icon">&#128187;</span>
+      <div class="card-content">
+        <h3>Interactive React Dashboard</h3>
+        <p>5 analytical views: Overview, Historical, Forecast, Climate Data, Verilator Debug</p>
+      </div>
+    </div>
+    <div class="card c7 full-width">
+      <div class="number">7</div>
+      <span class="icon">&#128209;</span>
+      <div class="card-content">
+        <h3>Log Every HDL Comparison with Timing Metrics</h3>
+        <p>Comprehensive audit log capturing temp values, fixed-point encodings, Verilator result, execution time (ms), and method (HDL vs fallback) for every comparison</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

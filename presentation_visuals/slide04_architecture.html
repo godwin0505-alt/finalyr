@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 4 - System Architecture Block Diagram</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px; }
+  .container { width: 1200px; }
+  .title { text-align: center; font-size: 26px; font-weight: 700; color: #1e293b; margin-bottom: 36px; }
+  .layer { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 8px; }
+  .layer-label { writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #64748b; width: 30px; text-align: center; }
+  .box { border-radius: 14px; padding: 20px 28px; text-align: center; border: 2px solid; min-width: 200px; position: relative; }
+  .box h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .box p { font-size: 12px; opacity: 0.8; }
+  .box .port { font-size: 11px; font-weight: 600; background: rgba(0,0,0,0.1); padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 6px; }
+
+  /* Presentation Layer */
+  .pres { background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-color: #3b82f6; color: #1e40af; }
+  /* Application Layer */
+  .app { background: linear-gradient(135deg, #dcfce7, #bbf7d0); border-color: #22c55e; color: #166534; }
+  /* Hardware Layer */
+  .hw { background: linear-gradient(135deg, #f3e8ff, #e9d5ff); border-color: #a855f7; color: #6b21a8; }
+  /* Data Layer */
+  .data { background: linear-gradient(135deg, #ffedd5, #fed7aa); border-color: #f97316; color: #9a3412; }
+
+  .arrow-down { display: flex; justify-content: center; margin: 4px 0; }
+  .arrow-down svg { width: 40px; height: 40px; }
+  .arrow-label-h { font-size: 11px; color: #64748b; text-align: center; font-weight: 600; margin: -2px 0 2px; }
+
+  .split-row { display: flex; justify-content: center; gap: 60px; align-items: flex-start; }
+  .split-connector { display: flex; justify-content: center; position: relative; height: 50px; }
+  .split-connector .line-left, .split-connector .line-right {
+    position: absolute; top: 0; width: 2px; height: 50px; background: #94a3b8;
+  }
+  .split-connector .line-left { left: calc(50% - 140px); }
+  .split-connector .line-right { left: calc(50% + 140px); }
+  .split-connector .line-h { position: absolute; top: 0; left: calc(50% - 140px); width: 280px; height: 2px; background: #94a3b8; }
+  .split-connector .line-center { position: absolute; top: -20px; left: calc(50%); width: 2px; height: 20px; background: #94a3b8; }
+
+  .fork-labels { display: flex; justify-content: center; gap: 140px; margin-top: -8px; margin-bottom: 4px; }
+  .fork-labels span { font-size: 11px; color: #64748b; font-weight: 600; font-style: italic; }
+
+  .bottom-row { display: flex; justify-content: center; gap: 60px; align-items: flex-start; }
+
+  .small-arrow { text-align: center; color: #94a3b8; font-size: 24px; margin: 6px 0; }
+
+  .detail-box { border-radius: 10px; padding: 10px 16px; margin-top: 8px; font-size: 11px; border: 1px dashed; }
+  .detail-box.data-detail { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
+  .detail-box.hw-detail { background: #faf5ff; border-color: #d8b4fe; color: #7c3aed; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">System Architecture &mdash; Four-Tier Block Diagram</div>
+
+  <!-- Presentation Layer -->
+  <div class="layer">
+    <div class="layer-label">PRESENTATION</div>
+    <div class="box pres" style="min-width: 600px;">
+      <h3>&#127760; React Frontend (SPA)</h3>
+      <p>React 18 + Vite + TypeScript + Tailwind CSS + Chart.js + Framer Motion</p>
+      <div class="port">Port :8080</div>
+    </div>
+  </div>
+
+  <div class="arrow-down">
+    <svg viewBox="0 0 40 40"><line x1="20" y1="2" x2="20" y2="30" stroke="#3b82f6" stroke-width="3"/><polygon points="12,28 20,38 28,28" fill="#3b82f6"/></svg>
+  </div>
+  <div class="arrow-label-h">HTTP/REST (JSON) &mdash; fetch() API calls</div>
+
+  <!-- Application Layer -->
+  <div class="layer">
+    <div class="layer-label">APPLICATION</div>
+    <div class="box app" style="min-width: 600px;">
+      <h3>&#9881;&#65039; Express API Server (Node.js)</h3>
+      <p>Express 5 + TypeScript + CORS + dotenv + Request Logging Middleware</p>
+      <div class="port">Port :5000</div>
+    </div>
+  </div>
+
+  <!-- Split into two paths -->
+  <div class="split-connector">
+    <div class="line-center"></div>
+    <div class="line-h"></div>
+    <div class="line-left"></div>
+    <div class="line-right"></div>
+  </div>
+
+  <div class="fork-labels">
+    <span>&#128450; Prisma ORM Queries</span>
+    <span>&#9889; child_process.spawn()</span>
+  </div>
+
+  <!-- Bottom two boxes -->
+  <div class="split-row">
+    <div>
+      <div class="box data">
+        <h3>&#128451; SQLite Database (LibSQL)</h3>
+        <p>Prisma 7.2 + @prisma/adapter-libsql</p>
+        <div class="port">file:dev.db</div>
+      </div>
+      <div class="detail-box data-detail">
+        <strong>3 Tables:</strong><br>
+        ClimateData (~9000 rows) &bull; ForecastData (~132 rows) &bull; ComparisonLog (grows)
+      </div>
+    </div>
+
+    <div>
+      <div class="box hw">
+        <h3>&#128268; Verilator Binary</h3>
+        <p>Verilog RTL &rarr; C++ &rarr; Native Executable</p>
+        <div class="port">obj_dir/Vcomparator</div>
+      </div>
+      <div class="detail-box hw-detail">
+        <strong>Q8.8 Fixed-Point:</strong><br>
+        16-bit comparator &bull; Input via CLI args &bull; Output via stdout &bull; Sub-5ms exec
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div style="display: flex; justify-content: center; gap: 24px; margin-top: 32px; flex-wrap: wrap;">
+    <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b;"><span style="width: 14px; height: 14px; border-radius: 4px; background: #3b82f6; display: inline-block;"></span> Presentation</span>
+    <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b;"><span style="width: 14px; height: 14px; border-radius: 4px; background: #22c55e; display: inline-block;"></span> Application</span>
+    <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b;"><span style="width: 14px; height: 14px; border-radius: 4px; background: #f97316; display: inline-block;"></span> Data Layer</span>
+    <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b;"><span style="width: 14px; height: 14px; border-radius: 4px; background: #a855f7; display: inline-block;"></span> Hardware Layer</span>
+  </div>
+</div>
+</body>
+</html>

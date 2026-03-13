@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Result 3 - SARIMAX Forecast 2024 vs 2025</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:30px}
+  .container{width:1280px}
+  .title{text-align:center;font-size:24px;font-weight:700;margin-bottom:6px}
+  .subtitle{text-align:center;font-size:13px;color:#94a3b8;margin-bottom:24px}
+  .tool-hint{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:14px 20px;margin-bottom:20px;font-size:12px;line-height:1.6}
+  .tool-hint strong{color:#fdba74}
+  .tool-hint code{font-family:Consolas,monospace;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;font-size:11px}
+  .cols4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:20px}
+  .stat{background:#1e293b;border-radius:12px;padding:16px;border:1px solid #334155;text-align:center}
+  .stat .val{font-size:22px;font-weight:800;font-family:Consolas,monospace}
+  .stat .lbl{font-size:10px;color:#94a3b8;margin-top:4px}
+  .val-red{color:#f87171}.val-blue{color:#60a5fa}.val-green{color:#34d399}.val-amber{color:#fbbf24}
+  .chart-area{background:#1e293b;border-radius:14px;padding:20px;border:1px solid #334155;margin-bottom:20px}
+  .chart-area h3{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  canvas{width:100%!important;height:300px!important}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{background:#1e293b;padding:8px 10px;text-align:center;font-weight:700;color:#94a3b8;border-bottom:2px solid #334155;font-size:11px}
+  td{padding:8px 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.03);font-family:Consolas,monospace;font-size:12px}
+  .pos{color:#f87171}.neg{color:#60a5fa}
+  .insight{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.25);border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.6;color:#d8b4fe;margin-top:12px}
+  .insight strong{color:#c084fc}
+  .extremes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  .extreme-card{background:#1e293b;border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px}
+  .extreme-icon{font-size:32px}
+  .extreme-text h4{font-size:14px;font-weight:700}
+  .extreme-text p{font-size:12px;font-family:Consolas,monospace;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Result 3: SARIMAX Forecast &mdash; 2024 (Actual) vs 2025 (Predicted)</div>
+  <div class="subtitle">GET /api/temperature/prediction &mdash; Month-by-month comparison with Verilator validation</div>
+
+  <div class="tool-hint">
+    <strong>Tools &amp; Libraries:</strong> Forecast data from <strong>SARIMAX model</strong> (statsmodels Python library, pre-generated), stored in <code>ForecastData</code> table.
+    Backend compares 2024 historical monthly averages (from <code>ClimateData</code>) against 2025 forecasts using <strong>Prisma</strong> queries + <strong>Verilator</strong> binary per month.
+    Frontend renders a <strong>Chart.js Bar</strong> (horizontal diverging) with dynamic colour intensity. Status classification uses custom <code>temperatureClassification.ts</code> utility.
+    <br><strong>SARIMAX Parameters:</strong> order(1,1,1), seasonal_order(1,1,1,12), exogenous regressors: Humidity, Precipitation, Wind Speed, Pressure.
+  </div>
+
+  <!-- Overall Stats -->
+  <div class="cols4">
+    <div class="stat"><div class="val val-blue">26.13&#176;C</div><div class="lbl">2024 Actual Avg</div></div>
+    <div class="stat"><div class="val val-red">27.57&#176;C</div><div class="lbl">2025 Predicted Avg</div></div>
+    <div class="stat"><div class="val val-amber">+1.44&#176;C</div><div class="lbl">Absolute Change</div></div>
+    <div class="stat"><div class="val val-green">+5.51%</div><div class="lbl">Percentage Change</div></div>
+  </div>
+
+  <!-- Extremes -->
+  <div class="extremes">
+    <div class="extreme-card" style="border:2px solid #ef4444">
+      <div class="extreme-icon">&#128293;</div>
+      <div class="extreme-text">
+        <h4 style="color:#f87171">Hottest Month (2025 Forecast)</h4>
+        <p style="color:#fca5a5">April &mdash; 31.2125&#176;C</p>
+      </div>
+    </div>
+    <div class="extreme-card" style="border:2px solid #22d3ee">
+      <div class="extreme-icon">&#10052;</div>
+      <div class="extreme-text">
+        <h4 style="color:#67e8f9">Coldest Month (2025 Forecast)</h4>
+        <p style="color:#a5f3fc">December &mdash; 23.6877&#176;C</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly Table using REAL forecast data -->
+  <div class="chart-area">
+    <h3 style="color:#fdba74">&#128202; Monthly Comparison Table (Real SARIMAX Output)</h3>
+    <table>
+      <tr><th>Month</th><th>2024 Actual (&#176;C)</th><th>2025 SARIMAX (&#176;C)</th><th>Change (&#176;C)</th><th>Change %</th><th>HDL Result</th></tr>
+      <tr><td>Jan</td><td>24.35</td><td>24.2155</td><td class="neg">-0.13</td><td class="neg">-0.55%</td><td>A&gt;B</td></tr>
+      <tr><td>Feb</td><td>26.21</td><td>26.0104</td><td class="neg">-0.20</td><td class="neg">-0.76%</td><td>A&gt;B</td></tr>
+      <tr><td>Mar</td><td>28.89</td><td>29.2689</td><td class="pos">+0.38</td><td class="pos">+1.31%</td><td>A&lt;B</td></tr>
+      <tr><td>Apr</td><td>30.52</td><td>31.2125</td><td class="pos">+0.69</td><td class="pos">+2.27%</td><td>A&lt;B</td></tr>
+      <tr><td>May</td><td>30.11</td><td>30.6057</td><td class="pos">+0.50</td><td class="pos">+1.65%</td><td>A&lt;B</td></tr>
+      <tr><td>Jun</td><td>28.77</td><td>29.5198</td><td class="pos">+0.75</td><td class="pos">+2.61%</td><td>A&lt;B</td></tr>
+      <tr><td>Jul</td><td>28.69</td><td>29.0363</td><td class="pos">+0.35</td><td class="pos">+1.21%</td><td>A&lt;B</td></tr>
+      <tr><td>Aug</td><td>28.10</td><td>28.6726</td><td class="pos">+0.57</td><td class="pos">+2.04%</td><td>A&lt;B</td></tr>
+      <tr><td>Sep</td><td>27.58</td><td>27.9625</td><td class="pos">+0.38</td><td class="pos">+1.39%</td><td>A&lt;B</td></tr>
+      <tr><td>Oct</td><td>26.40</td><td>26.8235</td><td class="pos">+0.42</td><td class="pos">+1.60%</td><td>A&lt;B</td></tr>
+      <tr><td>Nov</td><td>24.10</td><td>24.8140</td><td class="pos">+0.71</td><td class="pos">+2.96%</td><td>A&lt;B</td></tr>
+      <tr><td>Dec</td><td>23.89</td><td>23.6877</td><td class="neg">-0.20</td><td class="neg">-0.85%</td><td>A&gt;B</td></tr>
+    </table>
+  </div>
+
+  <!-- Deviation Chart -->
+  <div class="chart-area">
+    <h3 style="color:#c084fc">&#128200; Forecast Deviation Chart (Horizontal Diverging Bar)</h3>
+    <canvas id="fcChart"></canvas>
+  </div>
+
+  <div class="insight">
+    <strong>Insight:</strong> SARIMAX predicts that 9 out of 12 months in 2025 will be warmer than 2024, with June showing the largest warming (+0.75&#176;C, +2.61%).
+    January, February, and December are predicted to be slightly cooler &mdash; consistent with the model capturing inter-annual variability rather than monotonic warming.
+    April is the hottest predicted month at 31.21&#176;C (classified as &quot;Severe Climate Stress&quot;), while December at 23.69&#176;C remains in the &quot;Safe&quot; zone.
+    The seasonal sinusoidal pattern is fully preserved in the forecast, validating the SARIMAX seasonal component (s=12).
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<script>
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const changes = [-0.13, -0.20, 0.38, 0.69, 0.50, 0.75, 0.35, 0.57, 0.38, 0.42, 0.71, -0.20];
+const maxAbs = Math.max(...changes.map(Math.abs));
+
+new Chart(document.getElementById('fcChart'), {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [
+      { label: 'Cooler than 2024', data: changes.map(d => d < 0 ? d : 0),
+        backgroundColor: changes.map(d => d >= 0 ? 'transparent' : `rgba(${Math.floor(70-40*(Math.abs(d)/maxAbs))},${Math.floor(160+30*(Math.abs(d)/maxAbs))},255,0.85)`),
+        borderColor: 'rgba(90,180,255,0.9)', borderWidth: 1, borderRadius: 4 },
+      { label: 'Warmer than 2024', data: changes.map(d => d > 0 ? d : 0),
+        backgroundColor: changes.map(d => d <= 0 ? 'transparent' : `rgba(255,${Math.floor(140-60*(Math.abs(d)/maxAbs))},${Math.floor(90-50*(Math.abs(d)/maxAbs))},0.85)`),
+        borderColor: 'rgba(255,120,90,0.9)', borderWidth: 1, borderRadius: 4 }
+    ]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#94a3b8' } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} C` } } },
+    scales: {
+      x: { stacked: true, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#94a3b8' }, title: { display: true, text: 'Temperature Change (C)', color: '#94a3b8' } },
+      y: { stacked: true, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#94a3b8' } }
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 11 - Entity Relationship Diagram</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f8f9fa;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:40px}
+  .container{width:1250px}
+  .title{text-align:center;font-size:26px;font-weight:700;color:#1e293b;margin-bottom:8px}
+  .subtitle{text-align:center;font-size:14px;color:#64748b;margin-bottom:36px}
+  .tables{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;align-items:start}
+  .table-card{border-radius:16px;overflow:hidden;border:2px solid;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+  .table-header{padding:16px 20px;display:flex;align-items:center;gap:12px}
+  .table-header h3{font-size:17px;font-weight:700}
+  .table-header .badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;margin-left:auto}
+  .table-body{padding:0 0 12px}
+  .field{display:flex;align-items:center;gap:10px;padding:8px 20px;font-size:13px;border-bottom:1px solid rgba(0,0,0,.05)}
+  .field:last-child{border-bottom:none}
+  .field-icon{font-size:11px;width:18px;text-align:center;flex-shrink:0}
+  .field-name{font-family:Consolas,monospace;font-weight:600;min-width:120px}
+  .field-type{font-family:Consolas,monospace;font-size:12px;opacity:.6;min-width:80px}
+  .field-desc{font-size:11px;opacity:.5;margin-left:auto}
+  .pk{color:#eab308}
+  .idx{color:#3b82f6}
+  .uq{color:#a855f7}
+  .reg{color:#64748b}
+
+  /* Climate Data */
+  .t-climate{border-color:#22c55e}
+  .t-climate .table-header{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#166534}
+  .t-climate .badge{background:#166534;color:#dcfce7}
+
+  /* Forecast Data */
+  .t-forecast{border-color:#3b82f6}
+  .t-forecast .table-header{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af}
+  .t-forecast .badge{background:#1e40af;color:#dbeafe}
+
+  /* Comparison Log */
+  .t-log{border-color:#a855f7}
+  .t-log .table-header{background:linear-gradient(135deg,#f3e8ff,#e9d5ff);color:#6b21a8}
+  .t-log .badge{background:#6b21a8;color:#f3e8ff}
+
+  .indexes{margin-top:28px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .index-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px 20px;font-size:12px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .index-card strong{font-family:Consolas,monospace}
+  .idx-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .idx-green{background:#dcfce7;color:#166534}
+  .idx-blue{background:#dbeafe;color:#1e40af}
+  .idx-purple{background:#f3e8ff;color:#6b21a8}
+
+  .legend{display:flex;gap:20px;justify-content:center;margin-top:20px;font-size:12px;color:#64748b}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .leg-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Database Schema &mdash; Entity Relationship Diagram</div>
+  <div class="subtitle">Prisma 7.2 + SQLite (LibSQL) &mdash; 3 Independent Models</div>
+
+  <div class="tables">
+    <!-- ClimateData -->
+    <div class="table-card t-climate">
+      <div class="table-header">
+        <h3>ClimateData</h3>
+        <div class="badge">~9,000 rows</div>
+      </div>
+      <div class="table-body">
+        <div class="field"><span class="field-icon pk">&#128273;</span><span class="field-name">id</span><span class="field-type">Int PK</span><span class="field-desc">Auto-increment</span></div>
+        <div class="field"><span class="field-icon idx">&#9679;</span><span class="field-name">date</span><span class="field-type">DateTime</span><span class="field-desc">Indexed</span></div>
+        <div class="field"><span class="field-icon idx">&#9679;</span><span class="field-name">year</span><span class="field-type">Int</span><span class="field-desc">Compound idx</span></div>
+        <div class="field"><span class="field-icon idx">&#9679;</span><span class="field-name">month</span><span class="field-type">Int</span><span class="field-desc">Compound idx</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">day</span><span class="field-type">Int</span><span class="field-desc">Day of month</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">temperature</span><span class="field-type">Float</span><span class="field-desc">Celsius</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">humidity</span><span class="field-type">Float?</span><span class="field-desc">RH %</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">precipitation</span><span class="field-type">Float?</span><span class="field-desc">mm</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">windSpeed</span><span class="field-type">Float?</span><span class="field-desc">m/s</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">pressure</span><span class="field-type">Float?</span><span class="field-desc">kPa</span></div>
+      </div>
+    </div>
+
+    <!-- ForecastData -->
+    <div class="table-card t-forecast">
+      <div class="table-header">
+        <h3>ForecastData</h3>
+        <div class="badge">~132 rows</div>
+      </div>
+      <div class="table-body">
+        <div class="field"><span class="field-icon pk">&#128273;</span><span class="field-name">id</span><span class="field-type">Int PK</span><span class="field-desc">Auto-increment</span></div>
+        <div class="field"><span class="field-icon uq">&#9830;</span><span class="field-name">year</span><span class="field-type">Int</span><span class="field-desc">Unique pair</span></div>
+        <div class="field"><span class="field-icon uq">&#9830;</span><span class="field-name">month</span><span class="field-type">Int</span><span class="field-desc">Unique pair</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">temperature</span><span class="field-type">Float</span><span class="field-desc">SARIMAX pred</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">humidity</span><span class="field-type">Float?</span><span class="field-desc">Optional</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">precipitation</span><span class="field-type">Float?</span><span class="field-desc">Optional</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">windSpeed</span><span class="field-type">Float?</span><span class="field-desc">Optional</span></div>
+      </div>
+    </div>
+
+    <!-- ComparisonLog -->
+    <div class="table-card t-log">
+      <div class="table-header">
+        <h3>ComparisonLog</h3>
+        <div class="badge">Grows with usage</div>
+      </div>
+      <div class="table-body">
+        <div class="field"><span class="field-icon pk">&#128273;</span><span class="field-name">id</span><span class="field-type">Int PK</span><span class="field-desc">Auto-increment</span></div>
+        <div class="field"><span class="field-icon idx">&#9679;</span><span class="field-name">timestamp</span><span class="field-type">DateTime</span><span class="field-desc">Indexed</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">tempA</span><span class="field-type">Float</span><span class="field-desc">Celsius input</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">tempB</span><span class="field-type">Float</span><span class="field-desc">Celsius input</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">fixedPointA</span><span class="field-type">Int</span><span class="field-desc">Q8.8 encoded</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">fixedPointB</span><span class="field-type">Int</span><span class="field-desc">Q8.8 encoded</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">result</span><span class="field-type">String</span><span class="field-desc">A>B / A<B / A==B</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">executionTimeMs</span><span class="field-type">Float</span><span class="field-desc">HDL exec time</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">method</span><span class="field-type">String</span><span class="field-desc">HDL / Fallback</span></div>
+        <div class="field"><span class="field-icon reg">&#9675;</span><span class="field-name">raw8Mode</span><span class="field-type">Boolean</span><span class="field-desc">Encoding flag</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indexes -->
+  <div class="indexes">
+    <div class="index-card"><div class="idx-icon idx-green">&#128269;</div><strong>@@index([year, month])</strong> on ClimateData</div>
+    <div class="index-card"><div class="idx-icon idx-green">&#128269;</div><strong>@@index([date])</strong> on ClimateData</div>
+    <div class="index-card"><div class="idx-icon idx-blue">&#128274;</div><strong>@@unique([year, month])</strong> on ForecastData</div>
+    <div class="index-card"><div class="idx-icon idx-blue">&#128269;</div><strong>@@index([year])</strong> on ForecastData</div>
+    <div class="index-card"><div class="idx-icon idx-purple">&#128269;</div><strong>@@index([timestamp])</strong> on ComparisonLog</div>
+  </div>
+
+  <div class="legend">
+    <span><span class="leg-dot" style="background:#eab308"></span> Primary Key</span>
+    <span><span class="leg-dot" style="background:#3b82f6"></span> Indexed Field</span>
+    <span><span class="leg-dot" style="background:#a855f7"></span> Unique Constraint</span>
+    <span><span class="leg-dot" style="background:#94a3b8"></span> Regular Field</span>
+  </div>
+</div>
+</body>
+</html>

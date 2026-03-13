@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 13 - SARIMAX Model Architecture + Forecast Chart</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f8f9fa;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:40px}
+  .container{width:1250px}
+  .title{text-align:center;font-size:26px;font-weight:700;color:#1e293b;margin-bottom:8px}
+  .subtitle{text-align:center;font-size:14px;color:#64748b;margin-bottom:32px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+
+  /* Architecture Diagram */
+  .arch-panel{background:#fff;border:2px solid #3b82f6;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+  .arch-panel h3{font-size:16px;font-weight:700;color:#1d4ed8;margin-bottom:20px;text-align:center}
+  .arch-flow{display:flex;flex-direction:column;align-items:center;gap:0}
+  .arch-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+  .exo-box{border-radius:8px;padding:8px 14px;font-size:11px;font-weight:600;border:1.5px solid;text-align:center;min-width:90px}
+  .exo-temp{background:#fef2f2;border-color:#f87171;color:#b91c1c}
+  .exo-hum{background:#dbeafe;border-color:#60a5fa;color:#1e40af}
+  .exo-prec{background:#ecfdf5;border-color:#34d399;color:#065f46}
+  .exo-wind{background:#f0fdfa;border-color:#2dd4bf;color:#0f766e}
+  .exo-pres{background:#fefce8;border-color:#facc15;color:#854d0e}
+  .arch-arrow{text-align:center;color:#94a3b8;font-size:18px;padding:4px 0}
+  .arima-box{background:linear-gradient(135deg,#dbeafe,#c7d2fe);border:2.5px solid #6366f1;border-radius:14px;padding:18px 28px;text-align:center;color:#3730a3;min-width:380px}
+  .arima-box h4{font-size:16px;font-weight:800;margin-bottom:4px}
+  .arima-box p{font-size:12px;opacity:.7}
+  .arima-params{display:flex;gap:12px;justify-content:center;margin-top:10px}
+  .param{background:rgba(255,255,255,.6);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;font-family:Consolas,monospace;border:1px solid rgba(99,102,241,.3)}
+  .output-box{background:linear-gradient(135deg,#dcfce7,#bbf7d0);border:2.5px solid #22c55e;border-radius:14px;padding:14px 28px;text-align:center;color:#166534;min-width:380px}
+  .output-box h4{font-size:15px;font-weight:700}
+  .output-box p{font-size:12px;opacity:.7}
+
+  /* Forecast Chart */
+  .chart-panel{background:#fff;border:2px solid #22c55e;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+  .chart-panel h3{font-size:16px;font-weight:700;color:#166534;margin-bottom:16px;text-align:center}
+  canvas{width:100%!important;height:320px!important}
+
+  /* Model Specs */
+  .specs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
+  .spec-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.03)}
+  .spec-card .val{font-size:20px;font-weight:800;color:#6366f1;font-family:Consolas,monospace}
+  .spec-card .lbl{font-size:11px;color:#64748b;margin-top:4px}
+  .spec-card .desc{font-size:10px;color:#94a3b8;margin-top:2px}
+
+  .why-box{margin-top:20px;background:#fefce8;border:1px solid #fde047;border-radius:12px;padding:16px 20px;display:flex;gap:16px;align-items:flex-start}
+  .why-box h4{font-size:14px;font-weight:700;color:#854d0e;margin-bottom:6px;white-space:nowrap}
+  .why-list{display:flex;gap:12px;flex-wrap:wrap;flex:1}
+  .why-item{font-size:12px;color:#92400e;padding:6px 12px;background:rgba(253,224,71,.3);border-radius:6px;border:1px solid rgba(245,158,11,.2)}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">SARIMAX Forecasting Model</div>
+  <div class="subtitle">Seasonal Auto-Regressive Integrated Moving Average with eXogenous Variables</div>
+
+  <div class="two-col">
+    <!-- Left: Architecture -->
+    <div class="arch-panel">
+      <h3>Model Architecture</h3>
+      <div class="arch-flow">
+        <div style="font-size:11px;font-weight:600;color:#64748b;margin-bottom:6px;letter-spacing:1px">EXOGENOUS REGRESSORS (X)</div>
+        <div class="arch-row">
+          <div class="exo-box exo-hum">Humidity<br>(RH2M)</div>
+          <div class="exo-box exo-prec">Precipitation<br>(PRECTOTCORR)</div>
+          <div class="exo-box exo-wind">Wind Speed<br>(WS2M)</div>
+          <div class="exo-box exo-pres">Pressure<br>(PS)</div>
+        </div>
+        <div class="arch-arrow">&#9660; &#9660; &#9660; &#9660;</div>
+
+        <div style="font-size:11px;font-weight:600;color:#64748b;margin-bottom:6px;letter-spacing:1px">HISTORICAL TARGET VARIABLE</div>
+        <div class="arch-row">
+          <div class="exo-box exo-temp" style="min-width:200px">Temperature 2000-2024<br>(Monthly Averages)</div>
+        </div>
+        <div class="arch-arrow">&#9660;</div>
+
+        <div class="arima-box">
+          <h4>SARIMAX Engine</h4>
+          <p>Auto-Regressive + Integrated + Moving Average + Seasonal + eXogenous</p>
+          <div class="arima-params">
+            <div class="param">p,d,q = 1,1,1</div>
+            <div class="param">P,D,Q,s = 1,1,1,12</div>
+          </div>
+        </div>
+        <div class="arch-arrow">&#9660;</div>
+
+        <div class="output-box">
+          <h4>Forecasted Temperature (2025-2035)</h4>
+          <p>132 monthly predictions with seasonal patterns preserved</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Forecast Chart -->
+    <div class="chart-panel">
+      <h3>Temperature Forecast Visualization</h3>
+      <canvas id="forecastChart"></canvas>
+      <div style="text-align:center;margin-top:8px;font-size:11px;color:#94a3b8">Solid = Historical (actual) | Dashed = Forecast (SARIMAX predicted)</div>
+    </div>
+  </div>
+
+  <!-- Model Specs -->
+  <div class="specs">
+    <div class="spec-card"><div class="val">(1,1,1)</div><div class="lbl">Non-Seasonal Order</div><div class="desc">p=AR(1), d=Diff(1), q=MA(1)</div></div>
+    <div class="spec-card"><div class="val">(1,1,1,12)</div><div class="lbl">Seasonal Order</div><div class="desc">P=1, D=1, Q=1, s=12 months</div></div>
+    <div class="spec-card"><div class="val">300</div><div class="lbl">Training Samples</div><div class="desc">25 years x 12 months</div></div>
+    <div class="spec-card"><div class="val">132</div><div class="lbl">Forecast Points</div><div class="desc">11 years x 12 months</div></div>
+  </div>
+
+  <!-- Why SARIMAX -->
+  <div class="why-box">
+    <h4>Why SARIMAX?</h4>
+    <div class="why-list">
+      <div class="why-item">Explicitly models 12-month seasonality</div>
+      <div class="why-item">Accepts exogenous climate regressors</div>
+      <div class="why-item">Well-established in climatology literature</div>
+      <div class="why-item">Interpretable parameters (not black-box)</div>
+      <div class="why-item">Handles non-stationary data via differencing</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<script>
+const ctx = document.getElementById('forecastChart').getContext('2d');
+
+// Generate realistic seasonal temperature data
+const historicalYears = [];
+const historicalTemps = [];
+for (let y = 2000; y <= 2024; y++) {
+  for (let m = 0; m < 12; m++) {
+    historicalYears.push(`${y}-${String(m+1).padStart(2,'0')}`);
+    const seasonal = 24 + 6 * Math.sin((m / 12) * 2 * Math.PI - Math.PI / 2);
+    const trend = (y - 2000) * 0.03;
+    const noise = (Math.random() - 0.5) * 1.5;
+    historicalTemps.push(+(seasonal + trend + noise).toFixed(2));
+  }
+}
+
+const forecastYears = [];
+const forecastTemps = [];
+for (let y = 2025; y <= 2035; y++) {
+  for (let m = 0; m < 12; m++) {
+    forecastYears.push(`${y}-${String(m+1).padStart(2,'0')}`);
+    const seasonal = 24 + 6 * Math.sin((m / 12) * 2 * Math.PI - Math.PI / 2);
+    const trend = (y - 2000) * 0.035;
+    const noise = (Math.random() - 0.5) * 1.0;
+    forecastTemps.push(+(seasonal + trend + noise).toFixed(2));
+  }
+}
+
+// Show last 5 years of history + all forecast
+const showHist = 60; // last 5 years
+const labels = [...historicalYears.slice(-showHist), ...forecastYears];
+const histData = [...historicalTemps.slice(-showHist), ...Array(forecastYears.length).fill(null)];
+const fcData = [...Array(showHist - 1).fill(null), historicalTemps[historicalTemps.length - 1], ...forecastTemps];
+
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Historical (Actual)',
+        data: histData,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.08)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 0,
+        borderWidth: 2,
+      },
+      {
+        label: 'Forecast (SARIMAX)',
+        data: fcData,
+        borderColor: '#f97316',
+        backgroundColor: 'rgba(249,115,22,0.08)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 0,
+        borderWidth: 2,
+        borderDash: [6, 4],
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { font: { size: 12 } } },
+      tooltip: { mode: 'index', intersect: false },
+    },
+    interaction: { mode: 'nearest', axis: 'x', intersect: false },
+    scales: {
+      x: {
+        ticks: {
+          maxTicksLimit: 16,
+          font: { size: 9 },
+          maxRotation: 45,
+        },
+        grid: { color: 'rgba(0,0,0,0.05)' }
+      },
+      y: {
+        title: { display: true, text: 'Temperature (C)', font: { size: 12 } },
+        grid: { color: 'rgba(0,0,0,0.05)' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 10 - sim_main.cpp Data Transformation Sequence</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#0f172a;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:40px;color:#e2e8f0}
+  .container{width:1250px}
+  .title{text-align:center;font-size:26px;font-weight:700;margin-bottom:8px}
+  .subtitle{text-align:center;font-size:14px;color:#94a3b8;margin-bottom:36px}
+  .flow{display:flex;flex-direction:column;align-items:center;gap:0}
+  .step{display:flex;align-items:center;gap:20px;width:100%}
+  .step-left{width:80px;text-align:right;flex-shrink:0}
+  .step-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;font-weight:800;font-size:15px;border:2.5px solid}
+  .step-line{width:3px;height:24px;margin:0 auto;border-radius:2px}
+  .step-box{flex:1;border-radius:12px;padding:18px 24px;border:2px solid;display:flex;align-items:center;gap:20px}
+  .step-icon{font-size:32px;flex-shrink:0}
+  .step-content h4{font-size:15px;font-weight:700;margin-bottom:3px}
+  .step-content p{font-size:12px;opacity:.8;line-height:1.5}
+  .step-content code{font-family:Consolas,monospace;font-size:12px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.25)}
+  .step-right{width:260px;flex-shrink:0;text-align:center}
+  .step-val{font-family:Consolas,monospace;font-size:16px;font-weight:700;padding:8px 14px;border-radius:8px;display:inline-block;border:1px solid}
+  .arrow-down{display:flex;justify-content:center;padding:2px 0}
+  .arrow-down svg{width:24px;height:24px}
+
+  .s1 .step-num{color:#a855f7;border-color:#a855f7}.s1 .step-line{background:#a855f7}
+  .s1 .step-box{background:rgba(168,85,247,.1);border-color:#a855f7}
+  .s1 h4{color:#c084fc}
+  .s1 .step-val{background:rgba(168,85,247,.15);border-color:#a855f7;color:#d8b4fe}
+
+  .s2 .step-num{color:#3b82f6;border-color:#3b82f6}.s2 .step-line{background:#3b82f6}
+  .s2 .step-box{background:rgba(59,130,246,.1);border-color:#3b82f6}
+  .s2 h4{color:#93c5fd}
+  .s2 .step-val{background:rgba(59,130,246,.15);border-color:#3b82f6;color:#93c5fd}
+0
+  .s3 .step-num{color:#22c55e;border-color:#22c55e}.s3 .step-line{background:#22c55e}
+  .s3 .step-box{background:rgba(34,197,94,.1);border-color:#22c55e}
+  .s3 h4{color:#86efac}
+  .s3 .step-val{background:rgba(34,197,94,.15);border-color:#22c55e;color:#86efac}
+
+  .s4 .step-num{color:#eab308;border-color:#eab308}.s4 .step-line{background:#eab308}
+  .s4 .step-box{background:rgba(234,179,8,.1);border-color:#eab308}
+  .s4 h4{color:#fde047}
+  .s4 .step-val{background:rgba(234,179,8,.15);border-color:#eab308;color:#fde047}
+
+  .s5 .step-num{color:#f97316;border-color:#f97316}.s5 .step-line{background:#f97316}
+  .s5 .step-box{background:rgba(249,115,22,.1);border-color:#f97316}
+  .s5 h4{color:#fdba74}
+  .s5 .step-val{background:rgba(249,115,22,.15);border-color:#f97316;color:#fdba74}
+
+  .s6 .step-num{color:#ec4899;border-color:#ec4899}.s6 .step-line{background:#ec4899}
+  .s6 .step-box{background:rgba(236,72,153,.1);border-color:#ec4899}
+  .s6 h4{color:#f9a8d4}
+  .s6 .step-val{background:rgba(236,72,153,.15);border-color:#ec4899;color:#f9a8d4}
+
+  .s7 .step-num{color:#14b8a6;border-color:#14b8a6}.s7 .step-line{background:#14b8a6}
+  .s7 .step-box{background:rgba(20,184,166,.1);border-color:#14b8a6}
+  .s7 h4{color:#5eead4}
+  .s7 .step-val{background:rgba(20,184,166,.15);border-color:#14b8a6;color:#5eead4}
+
+  .modes{display:flex;gap:20px;justify-content:center;margin-top:32px}
+  .mode-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:18px 24px;text-align:center;min-width:240px}
+  .mode-card h4{font-size:14px;font-weight:700;margin-bottom:6px}
+  .mode-card p{font-size:12px;color:#94a3b8;line-height:1.5}
+  .mode-card code{font-family:Consolas,monospace;background:rgba(255,255,255,.05);padding:2px 6px;border-radius:4px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">sim_main.cpp &mdash; Data Transformation Sequence</div>
+  <div class="subtitle">Step-by-step journey of a temperature comparison through the C++ harness</div>
+
+  <div class="flow">
+    <!-- Step 1 -->
+    <div class="step s1">
+      <div class="step-left"><div class="step-num">1</div></div>
+      <div class="step-box">
+        <div class="step-icon">&#128229;</div>
+        <div class="step-content">
+          <h4>Parse CLI Arguments</h4>
+          <p>Read argv[1] and argv[2] as double-precision floats. Optional argv[3] = <code>"raw8"</code> flag.</p>
+        </div>
+      </div>
+      <div class="step-right">
+        <div class="step-val">24.5 , 25.0</div>
+      </div>
+    </div>
+    <div class="arrow-down s1"><div class="step-line"></div></div>
+
+    <!-- Step 2 -->
+    <div class="step s2">
+      <div class="step-left"><div class="step-num">2</div></div>
+      <div class="step-box">
+        <div class="step-icon">&#215;</div>
+        <div class="step-content">
+          <h4>Q8.8 Fixed-Point Encode</h4>
+          <p>Multiply by 256 (shift left 8 fractional bits): <code>aFixed = round(aIn * 256.0)</code></p>
+        </div>
+      </div>
+      <div class="step-right">
+        <div class="step-val">6272 , 6400</div>
+      </div>
+    </div>
+    <div class="arrow-down s2"><div class="step-line"></div></div>
+
+    <!-- Step 3 -->
+    <div class="step s3">
+      <div class="step-left"><div class="step-num">3</div></div>
+      <div class="step-box">
+        <div class="step-icon">&#128207;</div>
+        <div class="step-content">
+          <h4>Clamp to 16-bit Range</h4>
+          <p>Clamp each value to [0, 65535] via <code>clamp16()</code> lambda to prevent unsigned overflow.</p>
+        </div>
+      </div>
+      <div class="step-right">
+        <div class="step-val">6272 , 6400 (in range)</div>
+      </div>
+    </div>
+    <div class="arrow-down s3"><div class="step-line"></div></div>
+
+    <!-- Step 4 -->
+    <div class="step s4">
+      <div class="step-left"><div class="step-num">4</div></div>
+      <div class="step-box">
+        <div class="step-icon">&#128268;</div>
+        <div class="step-content">
+          <h4>Drive Verilog Ports</h4>
+          <p>Assign to module inputs: <code>top-&gt;a = 6272; top-&gt;b = 6400;</code></p>
+        </div>
+      </div>
+      <div class="step-right">
+        <div class="step-val">a=6272  b=6400</div>
+      </div>
+    </div>
+    <div class="arrow-down s4"><div class="step-line"></div></div>
+
+    <!-- Step 5 -->
+    <div class="step s5">
+      <div class="step-left"><div class="step-num">5</div></div>
+      <div class="step-box">
+        <div class="step-icon">&#9889;</div>
+        <div class="step-content">
+          <h4>Evaluate HDL Logic</h4>
+          <p>Call <code>top-&gt;eval()</code> &mdash; executes the combinational comparator at native speed.</p>
+        </div>
+      </div>
+      <div class="step-right">
+        <div class="step-val">eval() &mdash; &lt; 1&#956;s</div>
+      </div>
+    </div>
+    <div class="arrow-down s5"><div class="step-line"></div></div>
+
+    <!-- Step 6 -->
+    <div class="step s6">
+      <div class="step-left"><div class="step-num">6</div></div>
+      <div class="step-box">
+        <div class="step-icon">&#128270;</div>
+        <div class="step-content">
+          <h4>Read Result Register</h4>
+          <p>Decode <code>top-&gt;result</code>: 2 = A&gt;B, 1 = A&lt;B, 0 = A==B</p>
+        </div>
+      </div>
+      <div class="step-right">
+        <div class="step-val">result = 1 (A&lt;B)</div>
+      </div>
+    </div>
+    <div class="arrow-down s6"><div class="step-line"></div></div>
+
+    <!-- Step 7 -->
+    <div class="step s7">
+      <div class="step-left"><div class="step-num">7</div></div>
+      <div class="step-box">
+        <div class="step-icon">&#128424;</div>
+        <div class="step-content">
+          <h4>Print to stdout</h4>
+          <p>Output structured text captured by Node.js: <code>"Result: A&lt;B\nFixed A: 6272\nFixed B: 6400"</code></p>
+        </div>
+      </div>
+      <div class="step-right">
+        <div class="step-val">stdout &rarr; Node.js</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two Modes -->
+  <div class="modes">
+    <div class="mode-card">
+      <h4 style="color:#3b82f6">Default Mode (Q8.8)</h4>
+      <p>Float input &times; 256 &rarr; 16-bit fixed-point<br><code>./Vcomparator 24.5 25.0</code></p>
+    </div>
+    <div class="mode-card">
+      <h4 style="color:#f97316">Raw8 Mode</h4>
+      <p>Input treated as plain integer (no encoding)<br><code>./Vcomparator 42 27 raw8</code></p>
+    </div>
+    <div class="mode-card">
+      <h4 style="color:#22c55e">Node.js Integration</h4>
+      <p>Backend spawns binary, captures stdout lines,<br>parses Result/Fixed A/Fixed B, logs to DB</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

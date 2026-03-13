@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 2 - Problem Statement Split Diagram</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px; }
+  .container { width: 1300px; display: flex; gap: 40px; align-items: stretch; }
+  .panel { flex: 1; border-radius: 16px; padding: 36px; position: relative; }
+  .panel-left { background: linear-gradient(135deg, #fee2e2, #fecaca); border: 2px solid #f87171; }
+  .panel-right { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border: 2px solid #34d399; }
+  .panel-title { font-size: 22px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+  .panel-left .panel-title { color: #dc2626; }
+  .panel-right .panel-title { color: #059669; }
+  .badge { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; font-size: 24px; }
+  .badge-red { background: #fca5a5; }
+  .badge-green { background: #6ee7b7; }
+  .item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; padding: 14px; background: rgba(255,255,255,0.7); border-radius: 10px; }
+  .item-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .item-text { font-size: 15px; color: #1e293b; line-height: 1.5; }
+  .item-text strong { color: #0f172a; }
+  .center-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-width: 100px; }
+  .arrow-line { width: 4px; height: 60px; background: linear-gradient(to bottom, #f87171, #34d399); border-radius: 2px; }
+  .arrow-icon { font-size: 48px; color: #6366f1; }
+  .arrow-label { font-size: 13px; color: #6366f1; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 110px; }
+  .big-icon { display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 16px; font-size: 42px; margin: 0 auto 20px; }
+  .big-icon-red { background: #fecaca; }
+  .big-icon-green { background: #a7f3d0; }
+  .subtitle { text-align: center; font-size: 13px; color: #64748b; margin-top: 16px; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Left Panel: Traditional Approach -->
+  <div class="panel panel-left">
+    <div class="big-icon big-icon-red">&#128187;</div>
+    <div class="panel-title"><span class="badge badge-red">&#10060;</span> Traditional Software-Only Approach</div>
+    <div class="item"><span class="item-icon">&#128202;</span><div class="item-text"><strong>Software-only comparisons</strong> rely on floating-point arithmetic with potential precision ambiguity</div></div>
+    <div class="item"><span class="item-icon">&#128196;</span><div class="item-text"><strong>Static analysis tools</strong> produce reports without interactive exploration or real-time feedback</div></div>
+    <div class="item"><span class="item-icon">&#9888;&#65039;</span><div class="item-text"><strong>No hardware verification layer</strong> &mdash; results cannot be traced to RTL-level logic</div></div>
+    <div class="item"><span class="item-icon">&#128683;</span><div class="item-text"><strong>HDL coursework isolated</strong> from practical software applications; no bridge between VLSI and web</div></div>
+    <div class="subtitle">Gap: No hardware-verified, interactive climate analytics exist</div>
+  </div>
+
+  <!-- Center Arrow -->
+  <div class="center-arrow">
+    <div class="arrow-label">Missing Link</div>
+    <div class="arrow-line"></div>
+    <div class="arrow-icon">&#10132;</div>
+    <div class="arrow-line"></div>
+    <div class="arrow-label">Our Solution</div>
+  </div>
+
+  <!-- Right Panel: Proposed System -->
+  <div class="panel panel-right">
+    <div class="big-icon big-icon-green">&#9889;</div>
+    <div class="panel-title"><span class="badge badge-green">&#9989;</span> TempWatch Insights (Proposed)</div>
+    <div class="item"><span class="item-icon">&#128311;</span><div class="item-text"><strong>HDL-verified comparisons</strong> via Verilog Q8.8 fixed-point comparator compiled through Verilator</div></div>
+    <div class="item"><span class="item-icon">&#127760;</span><div class="item-text"><strong>Interactive web dashboard</strong> with real-time charts, multi-view analysis, and live connectivity status</div></div>
+    <div class="item"><span class="item-icon">&#128200;</span><div class="item-text"><strong>SARIMAX forecasting</strong> with exogenous variables for scientifically rigorous predictions</div></div>
+    <div class="item"><span class="item-icon">&#129302;</span><div class="item-text"><strong>Hardware-software co-design</strong> bridges VLSI education with production-grade software engineering</div></div>
+    <div class="subtitle">Every comparison passes through real HDL-compiled binary</div>
+  </div>
+</div>
+</body>
+</html>

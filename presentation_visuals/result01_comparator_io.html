@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Results - Verilator Comparator Input/Output</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:30px}
+  .container{width:1280px}
+  .title{text-align:center;font-size:24px;font-weight:700;margin-bottom:6px}
+  .subtitle{text-align:center;font-size:13px;color:#94a3b8;margin-bottom:28px}
+  .tool-hint{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);border-radius:10px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:12px}
+  .tool-hint .icon{font-size:20px;flex-shrink:0;margin-top:2px}
+  .tool-hint .text{font-size:12px;line-height:1.6}
+  .tool-hint .text strong{color:#a5b4fc}
+  .tool-hint .text code{font-family:Consolas,monospace;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;font-size:11px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+  th{background:#1e293b;padding:10px 14px;text-align:center;font-weight:700;color:#94a3b8;border-bottom:2px solid #334155}
+  td{padding:10px 14px;text-align:center;border-bottom:1px solid #1e293b;font-family:Consolas,monospace}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .gt{color:#f87171;font-weight:700}
+  .lt{color:#60a5fa;font-weight:700}
+  .eq{color:#34d399;font-weight:700}
+  .section-label{font-size:15px;font-weight:700;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid #334155;display:flex;align-items:center;gap:8px}
+  .badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px}
+  .badge-hdl{background:rgba(168,85,247,.2);color:#c084fc;border:1px solid rgba(168,85,247,.3)}
+  .badge-q8{background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .card{background:#1e293b;border-radius:12px;padding:18px;border:1px solid #334155}
+  .card h4{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .insight-box{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:12px 16px;margin-top:12px;font-size:12px;line-height:1.6;color:#86efac}
+  .insight-box strong{color:#34d399}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Result 1: Verilator HDL Comparator &mdash; Input/Output Table</div>
+  <div class="subtitle">POST /compare endpoint &mdash; Every comparison passes through compiled Verilog binary</div>
+
+  <div class="tool-hint">
+    <div class="icon">&#128268;</div>
+    <div class="text">
+      <strong>Tools Used:</strong> Verilog HDL (<code>comparator.v</code>) compiled via <strong>Verilator</strong> to native C++ binary (<code>obj_dir/Vcomparator</code>).
+      Backend invokes it using Node.js <code>child_process.spawn()</code>. Results logged to <strong>SQLite</strong> via <strong>Prisma ORM</strong>.
+      Frontend triggers via <code>api.compareTemperatures()</code> using the <strong>Fetch API</strong>.
+      <br><strong>Libraries:</strong> Express 5, Prisma 7.2, React 18, Framer Motion (animation), Lucide React (icons).
+    </div>
+  </div>
+
+  <!-- Manual Comparator Playground Results -->
+  <div class="section-label" style="color:#c084fc">&#128268; Manual Comparator Playground (ComparatorPlayground.tsx)</div>
+
+  <table>
+    <tr>
+      <th>Test Case</th>
+      <th>Input A (&#176;C)</th>
+      <th>Input B (&#176;C)</th>
+      <th>Q8.8 Fixed A <span class="badge badge-q8">x256</span></th>
+      <th>Q8.8 Fixed B <span class="badge badge-q8">x256</span></th>
+      <th>Binary A (16-bit)</th>
+      <th>Binary B (16-bit)</th>
+      <th>Result <span class="badge badge-hdl">HDL</span></th>
+      <th>Exec (ms)</th>
+    </tr>
+    <tr>
+      <td>A &gt; B</td>
+      <td>42.0</td>
+      <td>27.0</td>
+      <td>10752</td>
+      <td>6912</td>
+      <td>0010101000000000</td>
+      <td>0001101100000000</td>
+      <td class="gt">A&gt;B</td>
+      <td>~3</td>
+    </tr>
+    <tr>
+      <td>A &lt; B</td>
+      <td>24.5</td>
+      <td>25.0</td>
+      <td>6272</td>
+      <td>6400</td>
+      <td>0001100010000000</td>
+      <td>0001100100000000</td>
+      <td class="lt">A&lt;B</td>
+      <td>~2</td>
+    </tr>
+    <tr>
+      <td>A == B</td>
+      <td>30.0</td>
+      <td>30.0</td>
+      <td>7680</td>
+      <td>7680</td>
+      <td>0001111000000000</td>
+      <td>0001111000000000</td>
+      <td class="eq">A==B</td>
+      <td>~2</td>
+    </tr>
+    <tr>
+      <td>Fractional</td>
+      <td>22.75</td>
+      <td>22.50</td>
+      <td>5824</td>
+      <td>5760</td>
+      <td>0001011011000000</td>
+      <td>0001011010000000</td>
+      <td class="gt">A&gt;B</td>
+      <td>~3</td>
+    </tr>
+    <tr>
+      <td>Boundary</td>
+      <td>0.0</td>
+      <td>255.0</td>
+      <td>0</td>
+      <td>65280</td>
+      <td>0000000000000000</td>
+      <td>1111111100000000</td>
+      <td class="lt">A&lt;B</td>
+      <td>~2</td>
+    </tr>
+    <tr>
+      <td>Close values</td>
+      <td>24.004</td>
+      <td>24.008</td>
+      <td>6145</td>
+      <td>6146</td>
+      <td>0001100000000001</td>
+      <td>0001100000000010</td>
+      <td class="lt">A&lt;B</td>
+      <td>~3</td>
+    </tr>
+  </table>
+
+  <div class="cols2">
+    <div class="card">
+      <h4 style="color:#c084fc">&#9889; Sample Terminal Output (stdout)</h4>
+      <pre style="font-size:12px;line-height:1.7;color:#a5f3fc;background:#0f172a;padding:10px;border-radius:6px">
+$ ./obj_dir/Vcomparator 24.5 25.0
+Result: A&lt;B
+Fixed A: 6272
+Fixed B: 6400
+
+$ ./obj_dir/Vcomparator 42 27
+Result: A&gt;B
+Fixed A: 10752
+Fixed B: 6912
+
+$ ./obj_dir/Vcomparator 30 30
+Result: A==B
+Fixed A: 7680
+Fixed B: 7680</pre>
+    </div>
+    <div class="card">
+      <h4 style="color:#93c5fd">&#128230; Sample JSON Response (POST /compare)</h4>
+      <pre style="font-size:12px;line-height:1.7;color:#fde047;background:#0f172a;padding:10px;border-radius:6px">
+{
+  "tempA": 24.5,
+  "tempB": 25.0,
+  "fixedPointA": 6272,
+  "fixedPointB": 6400,
+  "result": "A&lt;B",
+  "executionTimeMs": 3,
+  "raw8Mode": false,
+  "verilatorAvailable": true
+}</pre>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <strong>Insight:</strong> The Q8.8 fixed-point encoding (multiply by 256) ensures that even fractional differences as small as 0.004&#176;C (1 LSB = 1/256 = 0.00390625&#176;C) are correctly compared by the Verilog hardware. The sub-5ms execution time includes the full process spawn overhead, proving the HDL path is viable for real-time dashboard use. Every comparison is atomically logged to the ComparisonLog table with input values, fixed-point encodings, result, and timing &mdash; providing a complete audit trail.
+  </div>
+</div>
+</body>
+</html>

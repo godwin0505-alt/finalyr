@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400, initial-scale=1.0">
+<title>Slide 12 - Data Ingestion Pipeline</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f8f9fa;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:40px}
+  .container{width:1250px}
+  .title{text-align:center;font-size:26px;font-weight:700;color:#1e293b;margin-bottom:8px}
+  .subtitle{text-align:center;font-size:14px;color:#64748b;margin-bottom:36px}
+
+  .pipeline{margin-bottom:40px}
+  .pipe-label{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;padding-left:4px}
+  .pipe-row{display:flex;align-items:center;gap:0;justify-content:center}
+  .pipe-box{border-radius:12px;padding:16px 18px;border:2px solid;text-align:center;min-width:160px}
+  .pipe-box h4{font-size:13px;font-weight:700;margin-bottom:4px}
+  .pipe-box p{font-size:11px;opacity:.7;line-height:1.4}
+  .pipe-box code{font-family:Consolas,monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px}
+  .pipe-arrow{display:flex;flex-direction:column;align-items:center;margin:0 4px;color:#94a3b8}
+  .pipe-arrow .arr{font-size:20px}
+  .pipe-arrow .lbl{font-size:9px;font-weight:600}
+
+  /* Pipeline 1: Historical */
+  .p1-label{color:#166534}
+  .p1 .src{background:#ecfdf5;border-color:#22c55e;color:#166534}
+  .p1 .parse{background:#dbeafe;border-color:#3b82f6;color:#1e40af}
+  .p1 .transform{background:#fef3c7;border-color:#f59e0b;color:#92400e}
+  .p1 .batch{background:#fce7f3;border-color:#ec4899;color:#9d174d}
+  .p1 .db{background:#f3e8ff;border-color:#a855f7;color:#6b21a8}
+
+  /* Pipeline 2: Forecast */
+  .p2-label{color:#1e40af}
+  .p2 .src{background:#dbeafe;border-color:#3b82f6;color:#1e40af}
+  .p2 .parse{background:#ecfdf5;border-color:#22c55e;color:#166534}
+  .p2 .transform{background:#fff7ed;border-color:#f97316;color:#9a3412}
+  .p2 .batch{background:#fce7f3;border-color:#ec4899;color:#9d174d}
+  .p2 .db{background:#f3e8ff;border-color:#a855f7;color:#6b21a8}
+
+  /* Details Section */
+  .details{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:32px}
+  .detail-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .detail-card h4{font-size:14px;font-weight:700;color:#1e293b;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .detail-card table{width:100%;font-size:12px;border-collapse:collapse}
+  .detail-card th{text-align:left;padding:4px 8px;color:#64748b;font-weight:600;border-bottom:1px solid #e2e8f0}
+  .detail-card td{padding:4px 8px;color:#334155}
+  .detail-card td code{font-family:Consolas,monospace;font-size:11px;color:#6b21a8}
+
+  .seed-cmd{margin-top:24px;background:#1e293b;border-radius:10px;padding:16px 24px;text-align:center}
+  .seed-cmd code{font-family:Consolas,monospace;font-size:14px;color:#a5f3fc}
+  .seed-cmd .comment{color:#64748b}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Data Ingestion &amp; Seeding Pipeline</div>
+  <div class="subtitle">seed.ts &mdash; CSV parsing, batch transformation, and Prisma createMany</div>
+
+  <!-- Pipeline 1: Historical Data -->
+  <div class="pipeline">
+    <div class="pipe-label p1-label">&#128994; Pipeline 1: Historical Climate Data (2000-2024)</div>
+    <div class="pipe-row p1">
+      <div class="pipe-box src">
+        <h4>&#128196; NASA CSV</h4>
+        <p>406 KB<br><code>temp_exogenous_dataset.csv</code><br>~9000 daily records</p>
+      </div>
+      <div class="pipe-arrow"><span class="lbl">read</span><span class="arr">&rarr;</span></div>
+      <div class="pipe-box parse">
+        <h4>&#9881; csv-parse/sync</h4>
+        <p>Synchronous parse<br>columns: true<br>skip_empty_lines</p>
+      </div>
+      <div class="pipe-arrow"><span class="lbl">map()</span><span class="arr">&rarr;</span></div>
+      <div class="pipe-box transform">
+        <h4>&#128260; Transform</h4>
+        <p>Date &rarr; JS Date<br>Extract year/month/day<br>parseFloat() fields<br>Filter NaN rows</p>
+      </div>
+      <div class="pipe-arrow"><span class="lbl">chunk</span><span class="arr">&rarr;</span></div>
+      <div class="pipe-box batch">
+        <h4>&#128230; Batch Insert</h4>
+        <p>1000 records/batch<br><code>createMany()</code><br>skipDuplicates: true</p>
+      </div>
+      <div class="pipe-arrow"><span class="lbl">write</span><span class="arr">&rarr;</span></div>
+      <div class="pipe-box db">
+        <h4>&#128451; SQLite</h4>
+        <p>ClimateData table<br>~9000 rows inserted<br>Indexed by year/month</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline 2: Forecast Data -->
+  <div class="pipeline">
+    <div class="pipe-label p2-label">&#128309; Pipeline 2: SARIMAX Forecast Data (2025-2035)</div>
+    <div class="pipe-row p2">
+      <div class="pipe-box src">
+        <h4>&#128200; Forecast CSV</h4>
+        <p>11 KB<br><code>temperature_forecast_2025_2035.csv</code><br>~132 monthly records</p>
+      </div>
+      <div class="pipe-arrow"><span class="lbl">read</span><span class="arr">&rarr;</span></div>
+      <div class="pipe-box parse">
+        <h4>&#9881; csv-parse/sync</h4>
+        <p>Synchronous parse<br>columns: true<br>extract Date + mean</p>
+      </div>
+      <div class="pipe-arrow"><span class="lbl">map()</span><span class="arr">&rarr;</span></div>
+      <div class="pipe-box transform">
+        <h4>&#128260; Transform</h4>
+        <p>Date &rarr; year/month<br>mean &rarr; temperature<br>Parse as float<br>Validate range</p>
+      </div>
+      <div class="pipe-arrow"><span class="lbl">insert</span><span class="arr">&rarr;</span></div>
+      <div class="pipe-box batch">
+        <h4>&#128230; Single Batch</h4>
+        <p>132 records<br><code>createMany()</code><br>@@unique([year,month])</p>
+      </div>
+      <div class="pipe-arrow"><span class="lbl">write</span><span class="arr">&rarr;</span></div>
+      <div class="pipe-box db">
+        <h4>&#128451; SQLite</h4>
+        <p>ForecastData table<br>132 rows inserted<br>Unique year/month</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Source Details -->
+  <div class="details">
+    <div class="detail-card">
+      <h4>&#128202; Historical CSV Columns</h4>
+      <table>
+        <tr><th>CSV Header</th><th>DB Field</th></tr>
+        <tr><td><code>Date</code></td><td>date, year, month, day</td></tr>
+        <tr><td><code>Temperature</code></td><td>temperature (Celsius)</td></tr>
+        <tr><td><code>RH2M</code></td><td>humidity (% RH)</td></tr>
+        <tr><td><code>PRECTOTCORR</code></td><td>precipitation (mm)</td></tr>
+        <tr><td><code>WS2M</code></td><td>windSpeed (m/s)</td></tr>
+        <tr><td><code>PS</code></td><td>pressure (kPa)</td></tr>
+      </table>
+    </div>
+    <div class="detail-card">
+      <h4>&#128200; Forecast CSV Columns</h4>
+      <table>
+        <tr><th>CSV Header</th><th>DB Field</th></tr>
+        <tr><td><code>Date</code></td><td>year, month (extracted)</td></tr>
+        <tr><td><code>mean</code></td><td>temperature (SARIMAX)</td></tr>
+      </table>
+      <div style="margin-top:10px;font-size:11px;color:#64748b;border-top:1px dashed #e2e8f0;padding-top:8px">
+        Source: Pre-generated SARIMAX model output trained on 2000-2024 monthly averages with exogenous regressors
+      </div>
+    </div>
+    <div class="detail-card">
+      <h4>&#9889; Batch Strategy</h4>
+      <table>
+        <tr><th>Parameter</th><th>Value</th></tr>
+        <tr><td>Batch size</td><td>1000 records</td></tr>
+        <tr><td>Method</td><td><code>createMany()</code></td></tr>
+        <tr><td>Duplicate handling</td><td>skipDuplicates</td></tr>
+        <tr><td>Pre-seed action</td><td>deleteMany() (truncate)</td></tr>
+        <tr><td>Post-seed action</td><td>count() verification</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="seed-cmd">
+    <code><span class="comment"># Run the seeding script</span>  npm run seed  <span class="comment"># or: npx tsx src/seed.ts</span></code>
+  </div>
+</div>
+</body>
+</html>
